@@ -5,6 +5,11 @@ var define, requireModule, require, requirejs;
   var FAILED = false;
 
   define = function(name, deps, callback) {
+    if (!Array.isArray(deps)) {
+      callback = deps;
+      deps =  [];
+    }
+
     registry[name] = {
       deps: deps,
       callback: callback
