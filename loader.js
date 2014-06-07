@@ -32,6 +32,14 @@ var define, requireModule, require, requirejs;
     };
   }
 
+  var o_create = Object.create || function(o) {
+    function K() {
+
+    }
+    K.prototype = o;
+    return new K();
+  };
+
   requirejs = require = requireModule = function(name) {
     if (state[name] !== FAILED &&
         seen.hasOwnProperty(name)) {
@@ -51,7 +59,7 @@ var define, requireModule, require, requirejs;
 
     try {
       reified = reify(mod.deps, name, seen[name]);
-      module = mod.callback.apply(this, reified.deps);
+      module = mod.callback.apply(o_create(null), reified.deps);
       loaded = true;
     } finally {
       if (!loaded) {

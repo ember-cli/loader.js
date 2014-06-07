@@ -168,3 +168,15 @@ test('runtime cycles', function(){
   equal(foo.quz(), bar.baz, 'cycle foo depends on bar');
   equal(bar.baz(), foo.quz, 'cycle bar depends on foo');
 });
+
+test("module context", function() {
+  expect(3);
+
+  define('foo', [], function() {
+    ok(this !== null && typeof this === 'object', 'expected this to be an object');
+    ok(this !== window, 'expected this to not be the window');
+    equal(this.prototype, undefined, 'expected no prototype chain..( Im not really sure how to detect Object.create(null)');
+  });
+
+  require('foo');
+});
