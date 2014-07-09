@@ -219,3 +219,21 @@ test('if factory returns a value it is used as export', function() {
 
   equal(foo.bar, 'bar');
 });
+
+test('relative import/export with duplicate top name', function(){
+  expect(2);
+
+  define('foo', ['./foo/bar'], function(bar) {
+    equal(bar.baz, 'baz');
+
+    return bar.baz;
+  });
+
+  define('bar', [], function() {
+    return {
+      baz: 'baz'
+    };
+  });
+
+  equal(require('foo'), 'baz');
+});

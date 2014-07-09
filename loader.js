@@ -113,6 +113,7 @@ var define, requireModule, require, requirejs;
 
       if (part === '..') { parentBase.pop(); }
       else if (part === '.') { continue; }
+      else if (i == 1 && part == name) { continue; }
       else { parentBase.push(part); }
     }
 
