@@ -51,7 +51,9 @@ var define, requireModule, require, requirejs;
 
     try {
       reified = reify(mod.deps, name, seen[name]);
-      module = mod.callback.apply(this, reified.deps);
+      if (mod.callback != null) {
+        module = mod.callback.apply(this, reified.deps);
+      }
       loaded = true;
     } finally {
       if (!loaded) {
