@@ -19,6 +19,7 @@ var define, requireModule, require, requirejs;
   function tryFinally(tryable, finalizer) {
     try {
       return tryable();
+    } catch(e) {
     } finally {
       finalizer();
     }
