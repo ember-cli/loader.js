@@ -30,7 +30,7 @@ var define, requireModule, require, requirejs;
 
     this.id       = uuid++;
     this.name     = name;
-    this.deps     = !deps.length && callback.length ? defaultDeps : deps;
+    this.deps     = (!deps || !deps.length) && callback.length ? defaultDeps : deps;
     this.exports  = exports || { };
     this.callback = callback;
     this.state    = undefined;
