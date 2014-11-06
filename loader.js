@@ -45,7 +45,7 @@ var define, requireModule, require, requirejs;
     registry[name] = new Module(name, deps, callback);
   };
 
-  define.amd = {};
+  define.amd = false;
 
   function reify(mod, name, seen) {
     var deps = mod.deps;
