@@ -54,8 +54,9 @@ var define, requireModule, require, requirejs;
     registry[name] = new Module(name, deps, callback);
   };
 
-  // we don't support all of AMD
-  // define.amd = {};
+  // we don't support all of AMD, but this is for compat of those have have
+  // found the narrow path
+  define.amd = { };
   // we will support petals...
   define.petal = { };
 

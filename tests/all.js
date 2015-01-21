@@ -21,7 +21,7 @@ module('loader.js api', {
 test('has api', function(){
   equal(typeof require, 'function');
   equal(typeof define, 'function');
-  equal(define.amd, undefined);
+  ok(define.amd);
   ok(define.petal);
   equal(typeof requirejs, 'function');
   equal(typeof requireModule, 'function');
