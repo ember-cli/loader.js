@@ -33,7 +33,7 @@ var define, requireModule, require, requirejs;
   function Module(name, deps, callback, exports) {
     this.id       = uuid++;
     this.name     = name;
-    this.deps     = !deps.length && callback.length ? defaultDeps : deps;
+    this.deps     = !deps && !!callback ? defaultDeps : deps;
     this.exports  = exports || { };
     this.callback = callback;
     this.state    = undefined;
