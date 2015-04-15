@@ -28,6 +28,20 @@ var define, requireModule, require, requirejs;
     throw new Error("an unsupported module was defined, expected `define(name, deps, module)` instead got: `" + length + "` arguments to define`");
   }
 
+  function stripLoaderPlugins(name) {
+    if (typeof name !== 'string') return name;
+
+    var position = name.indexOf('!');
+    if (position !== -1) { // contains plugin e.g. module.hbs!hbs
+      name = name.substr(0, position);
+
+      // is the an extension still?
+      name = name.substr(0, name.lastIndexOf('.'));
+    }
+
+    return name;
+  }
+
   var defaultDeps = ['require', 'exports', 'module'];
 
   function Module(name, deps, callback, exports) {
@@ -50,6 +64,8 @@ var define, requireModule, require, requirejs;
   }
 
   define = function(name, deps, callback) {
+    name = stripLoaderPlugins(name);
+
     if (arguments.length < 2) {
       unsupportedModule(arguments.length);
     }
@@ -116,6 +132,7 @@ var define, requireModule, require, requirejs;
     throw new Error('Could not find module ' + name);
   }
   requirejs = require = requireModule = function(name) {
+    name = stripLoaderPlugins(name);
     var mod = registry[name];
 
 
