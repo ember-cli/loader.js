@@ -374,6 +374,14 @@ test('strips jspm plugin definitions and works', function() {
     {
       input: 'pluginTest2.hbs!',
       output: 'pluginTest2'
+    },
+    {
+      input: 'pluginTest3.testhbs!',
+      output: 'pluginTest3.testhbs'
+    },
+    {
+      input: 'pluginTest4.ex!ex',
+      output: 'pluginTest4'
     }
   ];
 

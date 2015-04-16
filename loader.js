@@ -40,7 +40,7 @@ var define, requireModule, require, requirejs;
 
       // allow 3 characters for extension, ignore . in the 1st and 2nd positions
       if (indexOfDot !== -1 && indexOfDot !== 0
-        && indexOfDot !== 1 && indexOfDot < name.length - 3) {
+        && indexOfDot !== 1 && name.length - indexOfDot <= 4) {
         name = name.substr(0, indexOfDot);
       }
     }
