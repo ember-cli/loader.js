@@ -35,8 +35,14 @@ var define, requireModule, require, requirejs;
     if (position !== -1) { // contains plugin e.g. module.hbs!hbs
       name = name.substr(0, position);
 
-      // is the an extension still?
-      name = name.substr(0, name.lastIndexOf('.'));
+      // is the a file extension still?
+      var indexOfDot = name.lastIndexOf('.');
+
+      // allow 3 characters for extension, ignore . in the 1st and 2nd positions
+      if (indexOfDot !== -1 && indexOfDot !== 0
+        && indexOfDot !== 1 && indexOfDot < name.length - 3) {
+        name = name.substr(0, indexOfDot);
+      }
     }
 
     return name;
