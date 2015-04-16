@@ -363,3 +363,47 @@ test('foo foo/index are the same thing', function() {
 
   deepEqual(require('foo'), require('foo/index'));
 });
+
+test('strips jspm plugin definitions and works', function() {
+
+  var pluginPatterns = [
+    {
+      input: 'pluginTest1.hbs!hbs',
+      output: 'pluginTest1'
+    },
+    {
+      input: 'pluginTest2.hbs!',
+      output: 'pluginTest2'
+    },
+    {
+      input: 'pluginTest3.testhbs!',
+      output: 'pluginTest3.testhbs'
+    },
+    {
+      input: 'pluginTest4.ex!ex',
+      output: 'pluginTest4'
+    }
+  ];
+
+  var outputs = pluginPatterns.map(function(item) {
+    return item.output;
+  });
+
+  pluginPatterns.forEach(function(pattern) {
+
+    var pluginTestCalled = 0;
+
+    define(pattern.input, [], function() {
+      pluginTestCalled++;
+    })
+
+    var pluginTest = require(pattern.input);
+    equal(pluginTest, undefined);
+    equal(pluginTestCalled, 1);
+
+  });
+
+  deepEqual(keys(requirejs.entries), outputs);
+
+});
+
