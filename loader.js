@@ -122,8 +122,18 @@ var define, requireModule, require, requirejs;
     if (mod && mod.callback instanceof Alias) {
       mod = registry[mod.callback.name];
     }
-
-    if (!mod) { missingModule(name); }
+    
+    else if(!mod && global && global.require) {
+      try
+      {
+        return global.require(name);
+      }
+      catch (e) { 
+        missingModule(name);
+      }
+    }
+    
+    else if (!mod) { missingModule(name); }
 
     if (mod.state !== FAILED &&
         seen.hasOwnProperty(name)) {
