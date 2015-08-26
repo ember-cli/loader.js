@@ -108,9 +108,26 @@ var define, requireModule, require, requirejs;
   function requireFrom(name, origin) {
     var mod = registry[name];
     if (!mod) {
-      throw new Error('Could not find module `' + name + '` imported from `' + origin + '`');
+      missingRequireFromModule(name, origin);
     }
     return require(name);
+  }
+
+  function hasExtension(name, origin) {
+    var extension = name.indexOf('.js') > 0 ? 'js' : false;
+    var moduleName = name.split('.')[0];
+    if (name.indexOf('.hbs') > 0) {
+      extension = 'hbs';
+    }
+
+    if (extension) {
+      throw new Error('The module import for `' + moduleName + '` contains a `.' + extension + '` file extension in module: `' + origin +'`. ');
+    }
+  }
+  
+  function missingRequireFromModule(name, origin) {
+    hasExtension(name, origin);
+    throw new Error('Could not find module `' + name + '` imported from `' + origin + '`');
   }
 
   function missingModule(name) {

@@ -318,6 +318,29 @@ test('throws when accessing parent module of root', function() {
   }, /Cannot access parent module of root/);
 });
 
+test('throws if a .js or .hbs file extension is in the module name', function() {
+  expect(2);
+
+  define('bar', function() {
+    return function(){};
+  });
+  define('foo', ['bar.js'], function(bar) {
+    return bar;
+  });
+  define('baz', ['bar.hbs'], function(bar) {
+    return bar;
+  });
+
+  throws(function() {
+    require('foo');
+  }, /The module import for `bar` contains a `.js` file extension in module: `foo`./);
+
+  throws(function() {
+    require('baz');
+  }, /The module import for `bar` contains a `.hbs` file extension in module: `baz`./);
+
+});
+
 test("relative CJS esq require", function() {
   define('foo/a', ['require'], function(require) {
     return require('./b');
