@@ -1,6 +1,6 @@
 ### Running benchmarks
 
-note: these benchmarks run in seperate processes, the idea is to similate
+note: these benchmarks run in seperate processes, the idea is to simulate
 initial load + use, not after the JIT has settled
 
 ```sh
