@@ -14,7 +14,7 @@
     "ora": "^0.2.1",
     "promise-map-series": "^0.2.2",
     "qunitjs": "^1.20.0",
-    "testem": "^1.0.0"
+    "testem": "^1.13.0"
   },
   "scripts": {
     "test": "testem ci && jshint lib tests && jscs lib tests",
