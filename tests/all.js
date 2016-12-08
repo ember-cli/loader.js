@@ -1305,3 +1305,44 @@ test('require has a has method', function () {
     pendingQueueLength: 2
   });
 });
+
+test('broken modules are never returned', function() {
+  define('foo', function() {
+    throw new Error('I am a broken module');
+  });
+
+  throws(function() {
+    require('foo');
+  }, /I am a broken module/, 'The first time');
+
+  throws(function() {
+    require('foo');
+  }, /I am a broken module/, 'The second time');
+});
+
+test('modules with broken dependencies are never returned', function() {
+  define('foo', ['other'], function() {
+    throw new Error('I am a broken module');
+  });
+
+  define('valid-dep-before', function() {
+  });
+
+  define('valid-dep-after', function() {
+  });
+  define('other', function() {
+  });
+
+
+  define('bar', ['valid-dep-before', 'foo', 'valid-dep-after'], function() {
+  });
+
+
+  throws(function() {
+    require('bar');
+  }, /I am a broken module/, 'The first time');
+
+  throws(function() {
+    require('bar');
+  }, /I am a broken module/, 'The second time');
+});
