@@ -4,3 +4,12 @@ node_js:
 
 install:
   - npm install
+
+deploy:
+  provider: npm
+  email: stefan.penner+ember-cli@gmail.com
+  api_key:
+    secure: XPEVBjA2PvOtQQvjrLoltMr+5eVw35nqX46OD7ACrTrppudeDhKB+iDcAGgYNTCAVNsN6reSkupy5XdOpF93P4J4hK9BZ46RUQ9+INR+reU/LpJdzjVQJqlOcCLdppkbmoJuUUiv6O2nJDOrDqmADbI5NMM08XPprnsGS1Re/2c=
+  on:
+    tags: true
+    repo: ember-cli/loader.js
