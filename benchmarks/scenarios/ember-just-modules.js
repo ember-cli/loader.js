@@ -1,5 +1,6 @@
 // var loader = require('../extra/other-loader');
-var loader = require('../../lib/loader/loader.js');
+this.heimdall = global.heimdall = require('heimdalljs');
+var loader = require('../loader');
 var measure = require('../handler').measure;
 
 module.exports = function() {

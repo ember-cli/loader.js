@@ -1,10 +1,11 @@
 /*globals newDefine:false, newLoader:false, newRequire:false*/
-/*globals define:true, loader:true, require:true, requirejs:true */
+/*globals define:true, loader:true, require:true, requirejs:true, heimdall:true, Heimdall:true */
 /* jshint -W097 */
 
 'use strict';
 
 var keys;
+var tree;
 
 if (Object.keys) {
   keys = Object.keys;
@@ -18,11 +19,34 @@ if (Object.keys) {
   };
 }
 
+function statsForMonitor(monitor, tree) {
+  var stats = {};
+
+  tree.construct();
+  tree.visitPreOrder(function(node) {
+    var mStats = node.stats[monitor];
+    if (mStats) {
+      var statKeys = Object.keys(mStats);
+      statKeys.forEach(function(key) {
+        if (stats[key] === undefined) {
+          stats[key] = mStats[key];
+        } else {
+          stats[key] += mStats[key];
+        }
+      });
+    }
+  });
+
+  return stats;
+}
+
 module('loader.js api', {
   setup: function() {
     this._define = define;
     this._loader = loader;
     this._require = require;
+    heimdall._session.reset();
+    tree = new Heimdall.Tree(heimdall);
   },
 
   teardown: function() {
@@ -68,17 +92,19 @@ test('simple define/require', function() {
     fooCalled++;
   });
 
-  deepEqual(require._stats, {
-    findDeps: 0,
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     define: 1,
     exports: 0,
+    findDeps: 0,
     findModule: 0,
     modules: 1,
+    pendingQueueLength: 0,
     reify: 0,
     require: 0,
     resolve: 0,
-    resolveRelative: 0,
-    pendingQueueLength: 0
+    resolveRelative: 0
   });
 
   var foo = require('foo');
@@ -86,7 +112,9 @@ test('simple define/require', function() {
   equal(fooCalled, 1);
   deepEqual(keys(requirejs.entries), ['foo']);
 
-  deepEqual(require._stats, {
+  stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -103,7 +131,9 @@ test('simple define/require', function() {
   equal(fooAgain, undefined);
   equal(fooCalled, 1);
 
-  deepEqual(require._stats, {
+  stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -128,8 +158,9 @@ test('define without deps', function() {
   });
 
   var foo = require('foo');
+  var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(require._stats, {
+  deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -155,7 +186,9 @@ test('multiple define/require', function() {
 
   deepEqual(keys(requirejs.entries), ['foo']);
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 0,
     define: 1,
     exports: 0,
@@ -172,7 +205,9 @@ test('multiple define/require', function() {
 
   });
 
-  deepEqual(require._stats, {
+  stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 0,
     define: 2,
     exports: 0,
@@ -204,7 +239,9 @@ test('simple import/export', function() {
     };
   });
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 0,
     define: 2,
     exports: 0,
@@ -219,7 +256,9 @@ test('simple import/export', function() {
 
   equal(require('foo'), 'baz');
 
-  deepEqual(require._stats, {
+  stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -246,7 +285,9 @@ test('simple import/export with `exports`', function() {
     __exports__.baz = 'baz';
   });
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 0,
     define: 2,
     exports: 0,
@@ -261,7 +302,9 @@ test('simple import/export with `exports`', function() {
 
   equal(require('foo').baz, 'baz');
 
-  deepEqual(require._stats, {
+  stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -289,7 +332,9 @@ test('relative import/export', function() {
     };
   });
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 0,
     define: 2,
     exports: 0,
@@ -304,7 +349,9 @@ test('relative import/export', function() {
 
   equal(require('foo/a'), 'baz');
 
-  deepEqual(require._stats, {
+  stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -333,7 +380,9 @@ test('deep nested relative import/export', function() {
     };
   });
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 0,
     define: 2,
     exports: 0,
@@ -348,7 +397,9 @@ test('deep nested relative import/export', function() {
 
   equal(require('foo/a/b/c'), 'baz');
 
-  deepEqual(require._stats, {
+  stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -398,7 +449,9 @@ test('top-level relative import/export', function() {
 
   equal(require('foo'), 'baz');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -428,7 +481,9 @@ test('runtime cycles', function() {
   var foo = require('foo');
   var bar = require('bar');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -462,7 +517,10 @@ test('already evaluated modules are not pushed into the queue', function() {
   });
 
   require('bar');
-  deepEqual(require._stats, {
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -476,7 +534,10 @@ test('already evaluated modules are not pushed into the queue', function() {
   });
 
   require('foo');
-  deepEqual(require._stats, {
+
+  stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -504,7 +565,10 @@ test('same pending modules should not be pushed to the queue more than once', fu
   });
 
   require('bar');
-  deepEqual(require._stats, {
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -531,7 +595,9 @@ test('basic CJS mode', function() {
 
   var foo = require('a/foo');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -565,7 +631,9 @@ test('if factory returns a value it is used as export', function() {
 
   var foo = require('foo');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -590,7 +658,9 @@ test('if a module has no default property assume the return is the default', fun
 
   var foo = require('foo')['default'];
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -618,8 +688,9 @@ test('if a CJS style module has no default export assume module.exports is the d
   var foo = new Foo();
 
   equal(foo.bar, 'bar');
+  var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(require._stats, {
+  deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -643,7 +714,9 @@ test('if a module has no default property assume its export is default (function
   equal(require('foo')['default'], theFunction);
   equal(require('foo'), theFunction);
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -727,7 +800,9 @@ test('relative CJS esq require (with exports and module);', function() {
 
   equal(require('foo/a'), 'c-content');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 3,
     define: 3,
     exports: 3,
@@ -754,7 +829,9 @@ test('foo foo/index are the same thing', function() {
 
   deepEqual(require('foo'), require('foo/index'));
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 1,
     define: 3,
     exports: 1,
@@ -779,7 +856,9 @@ test('foo automatically falls back to foo/index', function() {
 
   deepEqual(require('foo'), require('foo/index'));
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 1,
     define: 2,
     exports: 1,
@@ -806,7 +885,9 @@ test('automatic /index fallback no ambiguity', function() {
   equal(require('foo/index'), 'I AM foo/index');
   equal(require('bar'), 'I AM bar with: I AM foo/index');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -836,8 +917,9 @@ test('automatic /index fallback is not used if module is defined', function() {
   equal(require('foo'), 'I AM foo');
   equal(require('foo/index'), 'I AM foo/index');
   equal(require('bar'), 'I AM bar with: I AM foo');
+  var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(require._stats, {
+  deepEqual(stats, {
     findDeps: 3,
     define: 3,
     exports: 3,
@@ -870,7 +952,9 @@ test('unsee', function() {
   require('foo');
   equal(counter, 2);
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 1,
     exports: 2,
@@ -899,7 +983,9 @@ test('manual /index fallback no ambiguity', function() {
   equal(require('foo/index'), 'I AM foo/index');
   equal(require('bar'), 'I AM bar with: I AM foo/index');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 3,
     exports: 2,
@@ -932,7 +1018,9 @@ test('manual /index fallback with ambiguity (alias after)', function() {
   equal(require('foo/index'), 'I AM foo/index');
   equal(require('bar'), 'I AM bar with: I AM foo/index');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 4,
     exports: 2,
@@ -965,7 +1053,9 @@ test('manual /index fallback with ambiguity (alias after all defines but before 
   equal(require('foo/index'), 'I AM foo/index');
   equal(require('bar'), 'I AM bar with: I AM foo/index');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 4,
     exports: 2,
@@ -994,7 +1084,9 @@ test('alias entries share same module instance', function() {
   require('foo/index');
   equal(count, 1, 'second require should use existing instance');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 1,
     define: 2,
     exports: 1,
@@ -1010,7 +1102,6 @@ test('alias entries share same module instance', function() {
 
 test('/index fallback + unsee', function() {
   var count = 0;
-
   define('foo/index', [], function() {
     count++;
   });
@@ -1033,7 +1124,9 @@ test('/index fallback + unsee', function() {
 
   equal(count, 3);
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 3,
     define: 2,
     exports: 3,
@@ -1060,7 +1153,9 @@ test('alias with target \w deps', function() {
 
   equal(require('quz'), 'I AM BAR');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 3,
     exports: 2,
@@ -1084,7 +1179,9 @@ test('alias chain (simple)', function() {
 
   equal(require('quz'), 'I AM BAR');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 1,
     define: 3,
     exports: 1,
@@ -1110,7 +1207,9 @@ test('alias chain (long)', function() {
 
   equal(require('bozo'), 'I AM BAR');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 1,
     define: 5,
     exports: 1,
@@ -1146,7 +1245,9 @@ test('alias chains are lazy', function() {
 
   equal(require('bozo'), 'I AM BAR2');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 8,
     exports: 2,
@@ -1181,7 +1282,9 @@ test('alias chains propogate unsee', function() {
   equal(require('b'), 'I AM BAR');
   equal(counter, 2);
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 3,
     exports: 2,
@@ -1211,7 +1314,9 @@ test('alias chaining with relative deps works', function() {
   equal(require('foo/index'), 'I AM foo/index: I AM baz');
   equal(require('bar'), 'I AM foo/index: I AM baz');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 4,
     exports: 2,
@@ -1240,7 +1345,9 @@ test('wrapModules is called when present', function() {
   require('foo');
   equal(annotatorCalled, 1);
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -1265,7 +1372,9 @@ test('import require from "require" works', function () {
 
   equal(require('foo'), 'I AM baz');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -1292,7 +1401,9 @@ test('require has a has method', function () {
 
   equal(require('foo'), 'I AM baz');
 
-  deepEqual(require._stats, {
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,

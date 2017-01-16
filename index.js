@@ -1,4 +1,5 @@
 'use strict';
+var shouldUseInstrumentedBuild = require('./utils').shouldUseInstrumentedBuild;
 
 module.exports = {
   name: 'loader.js',
@@ -6,12 +7,18 @@ module.exports = {
   init: function() {
     this._super.init && this._super.init.apply(this, arguments);
 
-    this.treePaths['vendor'] = 'lib';
+    this.treePaths['vendor'] = 'dist';
   },
 
   included: function() {
-    this.app.import('vendor/loader/loader.js', {
-      prepend: true
-    });
+    if (shouldUseInstrumentedBuild()) {
+      this.app.import('vendor/loader/loader.instrument.js', {
+        prepend: true
+      })
+    } else {
+      this.app.import('vendor/loader/loader.js', {
+        prepend: true
+      });
+    }
   }
 };
