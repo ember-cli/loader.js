@@ -64,7 +64,6 @@ test('has api', function() {
   equal(typeof require, 'function');
   equal(typeof define, 'function');
   strictEqual(define.amd, undefined);
-  ok(define.petal);
   equal(typeof requirejs, 'function');
   equal(typeof requireModule, 'function');
 });
