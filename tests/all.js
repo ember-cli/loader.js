@@ -19,6 +19,13 @@ if (Object.keys) {
   };
 }
 
+/**
+ * Simple helper to get the current state of a given module.
+ */
+function getModuleState(name) {
+  return requirejs.entries[name].state;
+}
+
 function statsForMonitor(monitor, tree) {
   var stats = {};
 
@@ -1455,4 +1462,114 @@ test('modules with broken dependencies are never returned', function() {
   throws(function() {
     require('bar');
   }, /I am a broken module/, 'The second time');
+});
+
+test('redefining a module when "new" replaces previous definition', function(assert) {
+  var first = false;
+  var second = false;
+
+  define('foo', function() { first = true; });
+
+  assert.equal(getModuleState('foo'), 'new', 'module is in "new" state');
+  define('foo', function() { second = true; });
+
+  require('foo');
+
+  assert.notOk(first, 'first module definition never used');
+  assert.ok(second, 'second module definition is used');
+});
+
+test('redefining a module when "pending" should no-op', function(assert) {
+  assert.expect(3);
+
+  var first = false;
+  var second = false;
+
+  define('foo', function() { first = true; });
+
+  define('baz', function() {
+    assert.equal(getModuleState('foo'), 'pending', 'module is in "pending" state');
+    define('foo', function() { second = true; });
+  });
+
+  define('bar', ['baz', 'foo'], function() {});
+
+  require('bar');
+  require('foo');
+
+  assert.ok(first, 'first module definition is used');
+  assert.notOk(second, 'second module definition never used');
+});
+
+test('redefining a module when "reifying" should no-op', function(assert) {
+  var first = false;
+  var second = false;
+
+  define('foo', ['bar'], function() { first = true; });
+
+  define('bar', function() {
+    assert.equal(getModuleState('foo'), 'reifying', 'module is in "reifying" state');
+    define('foo', function() { second = true; });
+  });
+
+  require('foo');
+  require('foo');
+
+  assert.ok(first, 'first module definition is used');
+  assert.notOk(second, 'second module definition never used');
+});
+
+test('redefining a module when "reified" should no-op', function(assert) {
+  var first = false;
+  var second = false;
+
+  define('foo', function() {
+    first = true;
+
+    assert.equal(getModuleState('foo'), 'reified', 'module is in "reified" state');
+    define('foo', function() { second = true; });
+  });
+
+  require('foo');
+  require('foo');
+
+  assert.ok(first, 'first module definition is used');
+  assert.notOk(second, 'second module definition never used');
+});
+
+test('redefining a module when "errored" should no-op', function(assert) {
+  assert.expect(4);
+
+  var first = false;
+  var second = false;
+
+  define('foo', ['bar'], function() { first = true; });
+  define('bar', function() { throw Error(); });
+  try {
+    require('foo');
+  } catch (e) {}
+  assert.notOk(first, 'first module definition never used');
+
+  assert.equal(getModuleState('foo'), 'errored', 'module is in "errored" state');
+  define('foo', function() { second = true; });
+  try {
+    require('foo');
+  } catch (e) {
+    assert.ok(true, 'first module definition used again and throws error again');
+  }
+  assert.notOk(second, 'second module definition never used');
+});
+
+test('redefining a module when "finalized" should no-op', function(assert) {
+  var first = false;
+  var second = false;
+
+  define('foo', function() { first = true; });
+  require('foo');
+  assert.ok(first, 'first module definition is used');
+
+  assert.equal(getModuleState('foo'), 'finalized', 'module is in "finalized" state');
+  define('foo', function() { second = true; });
+  require('foo');
+  assert.notOk(second, 'second module definition never used');
 });
