@@ -11,7 +11,7 @@ module.exports = {
   },
 
   included: function() {
-    if (shouldUseInstrumentedBuild()) {
+    if (false /* hotfix */&& shouldUseInstrumentedBuild()) {
       this.app.import('vendor/loader/loader.instrument.js', {
         prepend: true
       })
