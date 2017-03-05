@@ -736,6 +736,80 @@ test('if a module has no default property assume its export is default (function
   });
 });
 
+test('if a module has no default property assume its export is default (object)', function() {
+  var theObject = {};
+  define('foo', ['require', 'exports', 'module'], function() {
+    return theObject;
+  });
+
+  equal(require('foo')['default'], theObject);
+  equal(require('foo'), theObject);
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
+    findDeps: 1,
+    define: 1,
+    exports: 1,
+    findModule: 2,
+    modules: 1,
+    reify: 1,
+    require: 2,
+    resolve: 0,
+    resolveRelative: 0,
+    pendingQueueLength: 1
+  });
+});
+
+test('does not add default if export is frozen', function() {
+  var theObject = Object.freeze({});
+  define('foo', ['require', 'exports', 'module'], function() {
+    return theObject;
+  });
+
+  ok(!('default' in require('foo')));
+  equal(require('foo'), theObject);
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
+    findDeps: 1,
+    define: 1,
+    exports: 1,
+    findModule: 2,
+    modules: 1,
+    reify: 1,
+    require: 2,
+    resolve: 0,
+    resolveRelative: 0,
+    pendingQueueLength: 1
+  });
+});
+
+test('does not add default if export is sealed', function() {
+  var theObject = Object.seal({ derp: {} });
+  define('foo', ['require', 'exports', 'module'], function() {
+    return theObject;
+  });
+
+  ok(!('default' in require('foo')));
+  equal(require('foo'), theObject);
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
+    findDeps: 1,
+    define: 1,
+    exports: 1,
+    findModule: 2,
+    modules: 1,
+    reify: 1,
+    require: 2,
+    resolve: 0,
+    resolveRelative: 0,
+    pendingQueueLength: 1
+  });
+});
 
 test('has good error message for missing module', function() {
   var theFunction = function theFunction() {};
