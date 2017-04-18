@@ -28,8 +28,7 @@
   "files": [
     "dist",
     "index.js",
-    "utils.js",
-    "lib"
+    "utils.js"
   ],
   "author": "",
   "license": "MIT",
