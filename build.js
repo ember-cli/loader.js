@@ -19,4 +19,3 @@ var stripped = transform(source, {
 
 fs.writeFileSync('./dist/loader/loader.instrument.js', instrumented);
 fs.writeFileSync('./dist/loader/loader.js', stripped);
-

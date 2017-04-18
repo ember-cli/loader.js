@@ -1647,3 +1647,158 @@ test('redefining a module when "finalized" should no-op', function(assert) {
   require('foo');
   assert.notOk(second, 'second module definition never used');
 });
+
+test('loader module API: require', function() {
+  define('foo/baz/index', function () {
+    return 'I AM baz';
+  });
+
+  define('foo/index', ['loader'], function (loader) {
+    return loader.require('./baz');
+  });
+
+  equal(require('foo'), 'I AM baz');
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
+    findDeps: 2,
+    define: 2,
+    exports: 2,
+    findModule: 2,
+    modules: 2,
+    reify: 2,
+    require: 2,
+    resolve: 1,
+    resolveRelative: 1,
+    pendingQueueLength: 2
+  });
+});
+
+test('loader module API: has', function() {
+  define('foo/baz/index', function () {
+    return 'I AM baz';
+  });
+
+  define('foo/index', ['loader'], function (loader) {
+    if (loader.has('./baz')) {
+      return loader.require('./baz');
+    }
+  });
+
+  equal(require('foo'), 'I AM baz');
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
+    findDeps: 2,
+    define: 2,
+    exports: 2,
+    findModule: 2,
+    modules: 2,
+    reify: 2,
+    require: 2,
+    resolve: 2,
+    resolveRelative: 2,
+    pendingQueueLength: 2
+  });
+});
+
+test('loader module API: resolve', function() {
+  expect(2);
+
+  define('foo/baz/index', function () {
+    return 'I AM baz';
+  });
+
+  define('foo/index', ['loader'], function (loader) {
+    equal(loader.resolve('./baz'), 'foo/baz');
+  });
+
+  require('foo');
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
+    findDeps: 1,
+    define: 2,
+    exports: 1,
+    findModule: 1,
+    modules: 2,
+    reify: 1,
+    require: 1,
+    resolve: 1,
+    resolveRelative: 1,
+    pendingQueueLength: 1
+  });
+});
+
+test('loader module API: define', function() {
+  expect(3);
+
+  define('foo/index', ['loader'], function (loader) {
+    loader.define('foo/derp', function() {
+      ok(true, 'does not need have to have deps');
+
+      return 'derp!';
+    });
+
+    loader.define('foo/baz', ['foo/derp'], function(derp) {
+      equal(derp, 'derp!', 'can have deps');
+
+      return 'I AM baz';
+    });
+
+    return loader.require('./baz');
+  });
+
+  require('foo');
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
+    findDeps: 3,
+    define: 3,
+    exports: 3,
+    findModule: 3,
+    modules: 3,
+    reify: 3,
+    require: 2,
+    resolve: 2,
+    resolveRelative: 1,
+    pendingQueueLength: 3
+  });
+});
+
+test('loader module API: getIds', function() {
+  expect(2);
+
+  define('foo/derp', function() {
+    return 'derp!';
+  });
+
+  define('foo/baz', ['foo/derp'], function() {
+    return 'I AM baz';
+  });
+
+  define('foo/index', ['loader'], function (loader) {
+    deepEqual(loader.getIds(), ['foo/derp', 'foo/baz', 'foo/index']);
+  });
+
+  require('foo');
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
+    findDeps: 1,
+    define: 3,
+    exports: 1,
+    findModule: 1,
+    modules: 3,
+    reify: 1,
+    require: 1,
+    resolve: 0,
+    resolveRelative: 0,
+    pendingQueueLength: 1
+  });
+});

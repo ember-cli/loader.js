@@ -1,4 +1,5 @@
 'use strict';
+
 var shouldUseInstrumentedBuild = require('./utils').shouldUseInstrumentedBuild;
 
 module.exports = {
