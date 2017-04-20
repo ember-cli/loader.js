@@ -1,4 +1,4 @@
-var shouldInstrument = require('../../utils').shouldUseInstrumentedBuild;
+var shouldInstrument = require('../utils').shouldUseInstrumentedBuild;
 var loader;
 if (shouldInstrument()) {
   loader = require('../dist/loader/loader.instrument.js');
