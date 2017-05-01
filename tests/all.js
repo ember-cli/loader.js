@@ -1180,6 +1180,25 @@ test('alias entries share same module instance', function() {
   });
 });
 
+test('alias with 2 arguments entries share same module instance', function() {
+  var count = 0;
+  define.alias('foo/index', 'bar');
+
+  define('foo/index', [], function() {
+    count++;
+    return {};
+  });
+
+  equal(count, 0);
+  var bar = require('bar');
+  equal(count, 1);
+
+  var fooIndex = require('foo/index');
+  equal(count, 1, 'second require should use existing instance');
+
+  strictEqual(bar, fooIndex);
+});
+
 test('/index fallback + unsee', function() {
   var count = 0;
   define('foo/index', [], function() {
