@@ -61,9 +61,9 @@ benefits:
 * no reification step
 * no need to juggle pre-parse voodoo.
 
-### `require.unsee('foo');
+### `require.unsee('foo');`
 
-`require.unsee` allows one to unload a given module. *note* The side-affects of that module cannot be unloaded.
+`require.unsee` allows one to unload a given module. *note* The side-effects of that module cannot be unloaded.
 This is quite useful, especially for test suites. Being able to unload run tests, mitigates many common memory leaks:
 
 example:
