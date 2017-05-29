@@ -3,21 +3,7 @@
 /* jshint -W097 */
 
 'use strict';
-
-var keys;
 var tree;
-
-if (Object.keys) {
-  keys = Object.keys;
-} else {
-  keys = function(obj) {
-    var result = [];
-    for (var key  in obj) {
-      result.push(key);
-    }
-    return result;
-  };
-}
 
 /**
  * Simple helper to get the current state of a given module.
@@ -116,7 +102,7 @@ test('simple define/require', function() {
   var foo = require('foo');
   equal(foo, undefined);
   equal(fooCalled, 1);
-  deepEqual(keys(requirejs.entries), ['foo']);
+  deepEqual(Object.keys(requirejs.entries), ['foo']);
 
   stats = statsForMonitor('loaderjs', tree);
 
@@ -152,7 +138,7 @@ test('simple define/require', function() {
     pendingQueueLength: 1
   });
 
-  deepEqual(keys(requirejs.entries), ['foo']);
+  deepEqual(Object.keys(requirejs.entries), ['foo']);
 });
 
 
@@ -181,7 +167,7 @@ test('define without deps', function() {
 
   equal(foo, undefined);
   equal(fooCalled, 1);
-  deepEqual(keys(requirejs.entries), ['foo']);
+  deepEqual(Object.keys(requirejs.entries), ['foo']);
 });
 
 
@@ -190,7 +176,7 @@ test('multiple define/require', function() {
 
   });
 
-  deepEqual(keys(requirejs.entries), ['foo']);
+  deepEqual(Object.keys(requirejs.entries), ['foo']);
 
   var stats = statsForMonitor('loaderjs', tree);
 
@@ -226,7 +212,7 @@ test('multiple define/require', function() {
     pendingQueueLength: 0
   });
 
-  deepEqual(keys(requirejs.entries), ['foo', 'bar']);
+  deepEqual(Object.keys(requirejs.entries), ['foo', 'bar']);
 });
 
 
