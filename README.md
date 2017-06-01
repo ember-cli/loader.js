@@ -1,4 +1,4 @@
-loader.js [![Build Status](https://travis-ci.org/ember-cli/loader.js.png?branch=master)](https://travis-ci.org/ember-cli/loader.js)
+loader.js [![Build Status](https://travis-ci.org/ember-cli/loader.js.svg?branch=master)](https://travis-ci.org/ember-cli/loader.js)
 =========
 
 Minimal AMD loader mostly stolen from [@wycats](https://github.com/wycats).
