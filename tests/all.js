@@ -1580,6 +1580,17 @@ test('redefining a module when "pending" should no-op', function(assert) {
   assert.notOk(second, 'second module definition never used');
 });
 
+test('reify should release', function(assert) {
+  define('foo', ['bar'], function() { });
+  define('bar', ['bar'], function() { });
+
+  require('foo');
+  require('bar');
+
+  assert.deepEqual(require.entries['foo'].reified, []);
+  assert.deepEqual(require.entries['bar'].reified, []);
+
+});
 test('redefining a module when "reifying" should no-op', function(assert) {
   var first = false;
   var second = false;
