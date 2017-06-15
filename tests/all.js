@@ -8,8 +8,8 @@ var tree;
 /**
  * Simple helper to get the current state of a given module.
  */
-function getModuleState(name) {
-  return requirejs.entries[name].state;
+function getModuleState(id) {
+  return requirejs.entries[id].state;
 }
 
 function statsForMonitor(monitor, tree) {
@@ -811,7 +811,7 @@ test('provides good error message when an un-named AMD module is provided', func
     define(function() {
 
     });
-  }, new Error('an unsupported module was defined, expected `define(name, deps, module)` instead got: `1` arguments to define`'));
+  }, new Error('an unsupported module was defined, expected `define(id, deps, module)` instead got: `1` arguments to define`'));
 });
 
 
@@ -1416,7 +1416,7 @@ test('alias chaining with relative deps works', function() {
 test('wrapModules is called when present', function() {
   var fooCalled = 0;
   var annotatorCalled = 0;
-  loader.wrapModules = function(name, callback) {
+  loader.wrapModules = function(id, callback) {
     annotatorCalled++;
     return callback;
   };
