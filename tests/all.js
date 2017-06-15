@@ -1663,3 +1663,9 @@ test('redefining a module when "finalized" should no-op', function(assert) {
   require('foo');
   assert.notOk(second, 'second module definition never used');
 });
+
+test('define.exports', function(assert) {
+  var defaultExport = { example: 'export' };
+  define.exports('foo/bar', defaultExport);
+  assert.equal(require('foo/bar'), defaultExport);
+});
