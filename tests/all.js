@@ -8,8 +8,8 @@ var tree;
 /**
  * Simple helper to get the current state of a given module.
  */
-function getModuleState(name) {
-  return requirejs.entries[name].state;
+function getModuleState(id) {
+  return requirejs.entries[id].state;
 }
 
 function statsForMonitor(monitor, tree) {
@@ -141,7 +141,6 @@ test('simple define/require', function() {
   deepEqual(Object.keys(requirejs.entries), ['foo']);
 });
 
-
 test('define without deps', function() {
   var fooCalled = 0;
 
@@ -169,7 +168,6 @@ test('define without deps', function() {
   equal(fooCalled, 1);
   deepEqual(Object.keys(requirejs.entries), ['foo']);
 });
-
 
 test('multiple define/require', function() {
   define('foo', [], function() {
@@ -813,7 +811,7 @@ test('provides good error message when an un-named AMD module is provided', func
     define(function() {
 
     });
-  }, new Error('an unsupported module was defined, expected `define(name, deps, module)` instead got: `1` arguments to define`'));
+  }, new Error('an unsupported module was defined, expected `define(id, deps, module)` instead got: `1` arguments to define`'));
 });
 
 
@@ -1418,7 +1416,7 @@ test('alias chaining with relative deps works', function() {
 test('wrapModules is called when present', function() {
   var fooCalled = 0;
   var annotatorCalled = 0;
-  loader.wrapModules = function(name, callback) {
+  loader.wrapModules = function(id, callback) {
     annotatorCalled++;
     return callback;
   };
@@ -1668,4 +1666,14 @@ test('define.exports', function(assert) {
   var defaultExport = { example: 'export' };
   define.exports('foo/bar', defaultExport);
   assert.equal(require('foo/bar'), defaultExport);
+});
+
+test('require.moduleId', function(assert) {
+  define('foo', ['require'], function(require) {
+    assert.equal(require.moduleId, 'foo');
+    return require.moduleId;
+  });
+
+  define.alias('foo', 'foo/bar');
+  assert.equal(require('foo/bar'), 'foo');
 });
