@@ -31,6 +31,27 @@ require('foo') // => 'hi';
 require('foo') === require('foo/bar/baz');
 ```
 
+### `require('require')`
+
+When within a module, one can require `require`. This provides a `require` scoped to the current module. Enabling dynamic, relatively path requires.
+
+```js
+
+define('foo/apple', ['require'], function() { return 'apple'; });
+define('foo/bar', ['require'], function(require){ return require('./apple'););
+
+require('foo/bar'); // 'apple';
+```
+
+This scoped `require` also enables a module some reflection, in this case the ability for a module to see its own `moduleId`;
+
+```js
+
+define('my/name/is', ['require'], function(require) {
+  require.moduleId // => 'my/name/is';
+});
+```
+
 ### `define.exports('foo', {})`
 
 `define.exports` enables a fastpath for non-lazy dependency-less modules, for example:

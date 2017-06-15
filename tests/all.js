@@ -141,7 +141,6 @@ test('simple define/require', function() {
   deepEqual(Object.keys(requirejs.entries), ['foo']);
 });
 
-
 test('define without deps', function() {
   var fooCalled = 0;
 
@@ -169,7 +168,6 @@ test('define without deps', function() {
   equal(fooCalled, 1);
   deepEqual(Object.keys(requirejs.entries), ['foo']);
 });
-
 
 test('multiple define/require', function() {
   define('foo', [], function() {
@@ -1668,4 +1666,14 @@ test('define.exports', function(assert) {
   var defaultExport = { example: 'export' };
   define.exports('foo/bar', defaultExport);
   assert.equal(require('foo/bar'), defaultExport);
+});
+
+test('require.moduleId', function(assert) {
+  define('foo', ['require'], function(require) {
+    assert.equal(require.moduleId, 'foo');
+    return require.moduleId;
+  });
+
+  define.alias('foo', 'foo/bar');
+  assert.equal(require('foo/bar'), 'foo');
 });
