@@ -9,8 +9,9 @@
   "dependencies": {},
   "devDependencies": {
     "ara": "0.0.3",
-    "babel-core": "^5.0.0",
-    "babel5-plugin-strip-heimdall": "^5.0.2",
+    "babel-core": "^6.25.0",
+    "babel-plugin-transform-es2015-destructuring": "^6.23.0",
+    "babel6-plugin-strip-heimdall": "^6.0.1",
     "heimdalljs": "^0.3.2",
     "jscs": "^2.11.0",
     "jshint": "^2.9.2",

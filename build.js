@@ -3,18 +3,20 @@
 var babel = require('babel-core');
 var transform = babel.transform;
 var fs = require('fs');
-var stripHeimdall = require('babel5-plugin-strip-heimdall');
 var mkdirp = require('mkdirp').sync;
 
 mkdirp('./dist/loader');
 var source = fs.readFileSync('./lib/loader/loader.js', 'utf8');
 var instrumented = transform(source, {
-  whitelist: ['es6.destructuring']
+  plugins: ['transform-es2015-destructuring']
 }).code;
 
 var stripped = transform(source, {
-  plugins: [stripHeimdall],
-  whitelist: ['es6.destructuring']
+  // strip-heimdall *must* come before transpiling destructuring
+  plugins: [
+    'babel6-plugin-strip-heimdall',
+    'transform-es2015-destructuring'
+  ],
 }).code;
 
 fs.writeFileSync('./dist/loader/loader.instrument.js', instrumented);
