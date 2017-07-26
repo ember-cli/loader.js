@@ -129,6 +129,14 @@ loader.wrapModules = function(name, callback) {
     };
 ```
 
+## makeDefaultExport
+
+loader.js creates default exports for ember-cli `amdStrict` mode. If you do not need this behavior you can disable it like so:
+
+```js
+loader.makeDefaultExport = false;
+```
+
 ## Tests
 
 We use [testem](https://github.com/airportyh/testem) for running our test suite.
