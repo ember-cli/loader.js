@@ -1500,6 +1500,7 @@ test('alias chaining with relative deps works', function() {
 test('wrapModules is called when present', function() {
   var fooCalled = 0;
   var annotatorCalled = 0;
+  var _loaderWrapModules = loader.wrapModules;
   loader.wrapModules = function(id, callback) {
     annotatorCalled++;
     return callback;
@@ -1526,6 +1527,9 @@ test('wrapModules is called when present', function() {
     resolveRelative: 0,
     pendingQueueLength: 1
   });
+
+  // clean up
+  loader.wrapModules = _loaderWrapModules;
 });
 
 test('import require from "require" works', function () {
