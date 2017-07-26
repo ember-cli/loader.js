@@ -54,6 +54,7 @@ module('loader.js api', {
 test('has api', function() {
   equal(typeof loader, 'object');
   equal(typeof loader.noConflict, 'function');
+  equal(typeof loader.makeDefaultExport, 'boolean');
   equal(typeof require, 'function');
   equal(typeof define, 'function');
   strictEqual(define.amd, undefined);
@@ -400,6 +401,89 @@ test('deep nested relative import/export', function() {
     resolve: 1,
     resolveRelative: 1,
     pendingQueueLength: 2
+  });
+});
+
+test('assigns default when makeDefaultExport option enabled', function() {
+  equal(loader.makeDefaultExport, true);
+
+  var theObject = {};
+  define('foo', ['require', 'exports', 'module'], function() {
+    return theObject;
+  });
+  ok(('default' in require('foo')));
+  equal(require('foo'), theObject);
+  equal(theObject.default, theObject);
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
+    findDeps: 1,
+    define: 1,
+    exports: 1,
+    findModule: 2,
+    modules: 1,
+    reify: 1,
+    require: 2,
+    resolve: 0,
+    resolveRelative: 0,
+    pendingQueueLength: 1
+  });
+});
+
+test('doesn\'t assign default when makeDefaultExport option is disabled', function() {
+  var _loaderMakeDefaultExport = loader.makeDefaultExport;
+  loader.makeDefaultExport = false;
+  var theObject = {};
+  define('foo', ['require', 'exports', 'module'], function() {
+    return theObject;
+  });
+  ok(!('default' in require('foo')));
+  deepEqual(require('foo'), {});
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
+    findDeps: 1,
+    define: 1,
+    exports: 1,
+    findModule: 2,
+    modules: 1,
+    reify: 1,
+    require: 2,
+    resolve: 0,
+    resolveRelative: 0,
+    pendingQueueLength: 1
+  });
+
+  // clean up
+  loader.makeDefaultExport = _loaderMakeDefaultExport;
+});
+
+test('doesn\'t assign default when makeDefaultExport option is enabled and default is already defined', function() {
+  equal(loader.makeDefaultExport, true);
+
+  var theObject = { default: 'bar' };
+  define('foo', ['require', 'exports', 'module'], function() {
+    return theObject;
+  });
+  ok(('default' in require('foo')));
+  equal(require('foo').default, 'bar');
+  deepEqual(require('foo'), { default: 'bar' });
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
+    findDeps: 1,
+    define: 1,
+    exports: 1,
+    findModule: 3,
+    modules: 1,
+    reify: 1,
+    require: 3,
+    resolve: 0,
+    resolveRelative: 0,
+    pendingQueueLength: 1
   });
 });
 
@@ -1416,6 +1500,7 @@ test('alias chaining with relative deps works', function() {
 test('wrapModules is called when present', function() {
   var fooCalled = 0;
   var annotatorCalled = 0;
+  var _loaderWrapModules = loader.wrapModules;
   loader.wrapModules = function(id, callback) {
     annotatorCalled++;
     return callback;
@@ -1442,6 +1527,9 @@ test('wrapModules is called when present', function() {
     resolveRelative: 0,
     pendingQueueLength: 1
   });
+
+  // clean up
+  loader.wrapModules = _loaderWrapModules;
 });
 
 test('import require from "require" works', function () {
