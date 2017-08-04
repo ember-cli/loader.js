@@ -1602,6 +1602,13 @@ test('broken modules are never returned', function() {
   }, /I am a broken module/, 'The second time');
 });
 
+test('modules with null set as the dependency ignore the null and assume they have no dependencies', function(assert) {
+  define('foo', [null], function () {
+    return 'bar';
+  });
+  assert.equal(require('foo'), 'bar');
+});
+
 test('modules with broken dependencies are never returned', function() {
   define('foo', ['other'], function() {
     throw new Error('I am a broken module');
