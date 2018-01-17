@@ -1148,17 +1148,24 @@ test('manual /index fallback no ambiguity', function() {
 });
 
 test('manual /index fallback with ambiguity (alias after)', function() {
+  var counts = {
+    foo: 0,
+    'foo/index': 0
+  };
+
   define('foo', [], function() {
+    counts.foo++;
     return 'I AM foo';
   });
 
   define('foo/index', [], function() {
+    counts['foo/index']++;
     return 'I AM foo/index';
   });
 
   define('foo', define.alias('foo/index'));
 
-  define('bar', ['foo'], function(foo) {
+  define('bar', ['foo', 'foo/index'], function(foo) {
     return 'I AM bar with: ' + foo;
   });
 
@@ -1168,17 +1175,22 @@ test('manual /index fallback with ambiguity (alias after)', function() {
 
   var stats = statsForMonitor('loaderjs', tree);
 
+  deepEqual(counts, {
+    foo: 0,
+    'foo/index': 1
+  });
+
   deepEqual(stats, {
-    findDeps: 2,
     define: 4,
     exports: 2,
-    findModule: 4,
+    findDeps: 2,
+    findModule: 5,
     modules: 4,
+    pendingQueueLength: 2,
     reify: 2,
     require: 3,
-    resolve: 1,
-    resolveRelative: 0,
-    pendingQueueLength: 2
+    resolve: 2,
+    resolveRelative: 0
   });
 });
 
