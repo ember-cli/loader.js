@@ -1362,6 +1362,32 @@ test('alias chain (simple)', function() {
   });
 });
 
+test('alias chain (simple) with implicit /index', function() {
+  define('bar/index', [], function() {
+    return 'I AM BAR';
+  });
+
+  define('quz', define.alias('foo'));
+  define('foo', define.alias('bar'));
+
+  equal(require('quz'), 'I AM BAR');
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
+    findDeps: 1,
+    define: 3,
+    exports: 1,
+    findModule: 1,
+    modules: 3,
+    reify: 1,
+    require: 1,
+    resolve: 0,
+    resolveRelative: 0,
+    pendingQueueLength: 1
+  });
+});
+
 test('alias chain (long)', function() {
   define('bar', [], function() {
     return 'I AM BAR';
@@ -1432,6 +1458,43 @@ test('alias chains propogate unsee', function() {
   var counter = 0;
 
   define('bar', [], function() {
+    counter++;
+    return 'I AM BAR';
+  });
+
+  define('a', define.alias('bar'));
+  define('b', define.alias('a'));
+
+  equal(counter, 0);
+  equal(require('b'), 'I AM BAR');
+  equal(counter, 1);
+  equal(require('b'), 'I AM BAR');
+  equal(counter, 1);
+  require.unsee('b');
+  equal(counter, 1);
+  equal(require('b'), 'I AM BAR');
+  equal(counter, 2);
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
+    findDeps: 2,
+    define: 3,
+    exports: 2,
+    findModule: 4,
+    modules: 3,
+    reify: 2,
+    require: 3,
+    resolve: 0,
+    resolveRelative: 0,
+    pendingQueueLength: 2
+  });
+});
+
+test('alias chains propogate unsee with implicit /index', function() {
+  var counter = 0;
+
+  define('bar/index', [], function() {
     counter++;
     return 'I AM BAR';
   });
