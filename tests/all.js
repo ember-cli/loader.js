@@ -1371,6 +1371,9 @@ test('alias chain (simple) with implicit /index', function() {
   define('foo', define.alias('bar'));
 
   equal(require('quz'), 'I AM BAR');
+  throws(function() {
+    require('quz/index');
+  }, 'Could not find module `quz/index` imported from `(require)`');
 
   var stats = statsForMonitor('loaderjs', tree);
 
