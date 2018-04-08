@@ -19,15 +19,15 @@ loader.noConflict({
 
 ## Extra stuff
 
-### `define.alias('new-name', 'old/path')`
+### `define.alias('old/path', 'new-name')`
 
 `define.alias` allows creation of a symlink from one module to another, for example:
 
 ```js
-define('foo/bar/baz', [], () => 'hi');
+define('foo', [], () => 'hi');
 define.alias('foo', 'foo/bar/baz');
 
-require('foo') // => 'hi';
+require('foo/bar/baz') // => 'hi';
 require('foo') === require('foo/bar/baz');
 ```
 
