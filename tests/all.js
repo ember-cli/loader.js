@@ -60,6 +60,7 @@ test('has api', function() {
   strictEqual(define.amd, undefined);
   equal(typeof requirejs, 'function');
   equal(typeof requireModule, 'function');
+  equal(typeof loader.deprecationLogger, 'function');
 });
 
 test('no conflict mode', function() {
@@ -434,6 +435,12 @@ test('assigns default when makeDefaultExport option enabled', function() {
 test('doesn\'t assign default when makeDefaultExport option is disabled', function() {
   var _loaderMakeDefaultExport = loader.makeDefaultExport;
   loader.makeDefaultExport = false;
+
+  var deprecationArguments;
+  loader.deprecationLogger = function() {
+    deprecationArguments = [].slice.call(arguments);
+  };
+
   var theObject = {};
   define('foo', ['require', 'exports', 'module'], function() {
     return theObject;
@@ -455,6 +462,8 @@ test('doesn\'t assign default when makeDefaultExport option is disabled', functi
     resolveRelative: 0,
     pendingQueueLength: 1
   });
+
+  strictEqual(deprecationArguments, undefined);
 
   // clean up
   loader.makeDefaultExport = _loaderMakeDefaultExport;
@@ -724,6 +733,11 @@ test('if factory returns a value it is used as export', function() {
 });
 
 test('if a module has no default property assume the return is the default', function() {
+  var deprecationArguments;
+  loader.deprecationLogger = function() {
+    deprecationArguments = [].slice.call(arguments);
+  };
+
   define('foo', [], function() {
     return {
       bar: 'bar'
@@ -748,10 +762,21 @@ test('if a module has no default property assume the return is the default', fun
   });
 
   equal(foo.bar, 'bar');
+
+  deepEqual(deprecationArguments, [
+    'The `foo` module does not define a default export, but loader.js generated one anyway. This behavior is deprecated and will be removed in v5.0.0. To opt out of this behavior, set `loader.makeDefaultExport = false`.',
+    false,
+    { id: 'loaderjs.makeDefaultExport', until: '5.0.0' }
+  ]);
 });
 
 
 test('if a CJS style module has no default export assume module.exports is the default', function() {
+  var deprecationArguments;
+  loader.deprecationLogger = function() {
+    deprecationArguments = [].slice.call(arguments);
+  };
+
   define('Foo', ['require', 'exports', 'module'], function(require, exports, module) {
     module.exports = function Foo() {
       this.bar = 'bar';
@@ -776,10 +801,21 @@ test('if a CJS style module has no default export assume module.exports is the d
     resolveRelative: 0,
     pendingQueueLength: 1
   });
+
+  deepEqual(deprecationArguments, [
+    'The `Foo` module does not define a default export, but loader.js generated one anyway. This behavior is deprecated and will be removed in v5.0.0. To opt out of this behavior, set `loader.makeDefaultExport = false`.',
+    false,
+    { id: 'loaderjs.makeDefaultExport', until: '5.0.0' }
+  ]);
 });
 
 
 test('if a module has no default property assume its export is default (function)', function() {
+  var deprecationArguments;
+  loader.deprecationLogger = function() {
+    deprecationArguments = [].slice.call(arguments);
+  };
+
   var theFunction = function theFunction() {};
   define('foo', ['require', 'exports', 'module'], function() {
     return theFunction;
@@ -802,9 +838,20 @@ test('if a module has no default property assume its export is default (function
     resolveRelative: 0,
     pendingQueueLength: 1
   });
+
+  deepEqual(deprecationArguments, [
+    'The `foo` module does not define a default export, but loader.js generated one anyway. This behavior is deprecated and will be removed in v5.0.0. To opt out of this behavior, set `loader.makeDefaultExport = false`.',
+    false,
+    { id: 'loaderjs.makeDefaultExport', until: '5.0.0' }
+  ]);
 });
 
 test('if a module has no default property assume its export is default (object)', function() {
+  var deprecationArguments;
+  loader.deprecationLogger = function() {
+    deprecationArguments = [].slice.call(arguments);
+  };
+
   var theObject = {};
   define('foo', ['require', 'exports', 'module'], function() {
     return theObject;
@@ -827,9 +874,20 @@ test('if a module has no default property assume its export is default (object)'
     resolveRelative: 0,
     pendingQueueLength: 1
   });
+
+  deepEqual(deprecationArguments, [
+    'The `foo` module does not define a default export, but loader.js generated one anyway. This behavior is deprecated and will be removed in v5.0.0. To opt out of this behavior, set `loader.makeDefaultExport = false`.',
+    false,
+    { id: 'loaderjs.makeDefaultExport', until: '5.0.0' }
+  ]);
 });
 
 test('does not add default if export is frozen', function() {
+  var deprecationArguments;
+  loader.deprecationLogger = function() {
+    deprecationArguments = [].slice.call(arguments);
+  };
+
   var theObject = Object.freeze({});
   define('foo', ['require', 'exports', 'module'], function() {
     return theObject;
@@ -852,9 +910,16 @@ test('does not add default if export is frozen', function() {
     resolveRelative: 0,
     pendingQueueLength: 1
   });
+
+  strictEqual(deprecationArguments, undefined);
 });
 
 test('does not add default if export is sealed', function() {
+  var deprecationArguments;
+  loader.deprecationLogger = function() {
+    deprecationArguments = [].slice.call(arguments);
+  };
+
   var theObject = Object.seal({ derp: {} });
   define('foo', ['require', 'exports', 'module'], function() {
     return theObject;
@@ -877,6 +942,8 @@ test('does not add default if export is sealed', function() {
     resolveRelative: 0,
     pendingQueueLength: 1
   });
+
+  strictEqual(deprecationArguments, undefined);
 });
 
 test('has good error message for missing module', function() {

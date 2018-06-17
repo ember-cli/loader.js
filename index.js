@@ -10,13 +10,19 @@ module.exports = {
     this.treePaths['vendor'] = 'dist';
   },
 
-  included: function() {
+  included: function(app, parentAddon) {
+    var isProduction = process.env.EMBER_ENV === 'production';
+
     if (false /* hotfix */&& shouldUseInstrumentedBuild()) {
-      this.app.import('vendor/loader/loader.instrument.js', {
+      app.import('vendor/loader/loader.instrument.js', {
         prepend: true
-      })
+      });
+    } else if (!isProduction) {
+      app.import('vendor/loader/loader.debug.js', {
+        prepend: true
+      });
     } else {
-      this.app.import('vendor/loader/loader.js', {
+      app.import('vendor/loader/loader.js', {
         prepend: true
       });
     }
