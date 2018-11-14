@@ -31,6 +31,20 @@ require('foo/bar/baz') // => 'hi';
 require('foo') === require('foo/bar/baz');
 ```
 
+
+
+### `define.default('old/path', 'new-name')`
+
+`define.default` is short-hand for `export { default } from 'foo';`
+
+```js
+define('foo', [], () => 'hi');
+define.default('foo', 'foo/bar/baz');
+
+require('foo/bar/baz') // => 'hi';
+require('foo') === require('foo/bar/baz');
+```
+
 ### `require('require')`
 
 When within a module, one can require `require`. This provides a `require` scoped to the current module. Enabling dynamic, relatively path requires.

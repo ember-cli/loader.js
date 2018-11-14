@@ -1260,6 +1260,43 @@ test('alias entries share same module instance', function() {
   });
 });
 
+test('define.default with default and other exports', function() {
+  var count = 0;
+  define.default('to', 'from');
+  define('from', ['exports'], function(exports) {
+    count++;
+
+    exports.default = 'YUP';
+    exports.other = 'NOPE';
+  });
+
+  equal(count, 0);
+  var result = require('to');
+  equal(count, 1);
+  equal(result.default, 'YUP');
+  deepEqual(require('from'), {
+    default: 'YUP',
+    other: 'NOPE'
+  });
+
+  equal(count, 1, 'second require should use existing instance');
+
+  var stats = statsForMonitor('loaderjs', tree);
+
+  deepEqual(stats, {
+    define: 2,
+    exports: 2,
+    findDeps: 2,
+    findModule: 3,
+    modules: 2,
+    pendingQueueLength: 2,
+    reify: 2,
+    require: 2,
+    resolve: 1,
+    resolveRelative: 0
+  });
+});
+
 test('alias with 2 arguments entries share same module instance', function() {
   var count = 0;
   define.alias('foo/index', 'bar');
