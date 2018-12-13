@@ -13,7 +13,7 @@
     "babel-plugin-transform-es2015-destructuring": "^6.23.0",
     "babel6-plugin-strip-heimdall": "^6.0.1",
     "heimdalljs": "^0.3.2",
-    "jscs": "^2.11.0",
+    "jscs": "^3.0.7",
     "jshint": "^2.9.2",
     "mkdirp": "^0.5.1",
     "ora": "^0.2.1",
