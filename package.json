@@ -2,9 +2,33 @@
   "name": "loader.js",
   "version": "4.7.0",
   "description": "loader.js =========",
+  "keywords": [
+    "ember-addon"
+  ],
+  "homepage": "https://github.com/ember-cli/loader.js",
+  "bugs": {
+    "url": "https://github.com/ember-cli/loader.js/issues"
+  },
+  "license": "MIT",
+  "author": "",
+  "files": [
+    "dist",
+    "index.js",
+    "utils.js"
+  ],
   "main": "dist/loader/loader.js",
   "directories": {
     "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ember-cli/loader.js.git"
+  },
+  "scripts": {
+    "build": "node build",
+    "prepublish": "./build.js",
+    "test": "testem ci && jshint lib tests && jscs lib tests",
+    "test:dev": "testem"
   },
   "dependencies": {},
   "devDependencies": {
@@ -21,30 +45,6 @@
     "qunitjs": "^1.20.0",
     "testem": "^2.13.0"
   },
-  "scripts": {
-    "build": "node build",
-    "test": "testem ci && jshint lib tests && jscs lib tests",
-    "test:dev": "testem",
-    "prepublish": "./build.js"
-  },
-  "files": [
-    "dist",
-    "index.js",
-    "utils.js"
-  ],
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/ember-cli/loader.js/issues"
-  },
-  "homepage": "https://github.com/ember-cli/loader.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ember-cli/loader.js.git"
-  },
-  "keywords": [
-    "ember-addon"
-  ],
   "ember-addon": {
     "main": "index.js"
   }
