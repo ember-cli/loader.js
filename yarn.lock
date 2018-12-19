@@ -1193,8 +1193,8 @@ has-unicode@^2.0.0:
   resolved "https://registry.yarnpkg.com/has-unicode/-/has-unicode-2.0.1.tgz#e0e6fe6a28cf51138855e086d1691e771de2a8b9"
 
 heimdalljs@^0.3.2:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/heimdalljs/-/heimdalljs-0.3.2.tgz#d19f98cf7c6a7660c2ecbbeaa696db3436227713"
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/heimdalljs/-/heimdalljs-0.3.3.tgz#e92d2c6f77fd46d5bf50b610d28ad31755054d0b"
   dependencies:
     rsvp "~3.2.1"
 
