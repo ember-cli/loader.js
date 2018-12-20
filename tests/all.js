@@ -51,34 +51,34 @@ QUnit.module('loader.js api', {
   }
 });
 
-QUnit.test('has api', function() {
-  equal(typeof loader, 'object');
-  equal(typeof loader.noConflict, 'function');
-  equal(typeof loader.makeDefaultExport, 'boolean');
-  equal(typeof require, 'function');
-  equal(typeof define, 'function');
-  strictEqual(define.amd, undefined);
-  equal(typeof requirejs, 'function');
-  equal(typeof requireModule, 'function');
+QUnit.test('has api', function(assert) {
+  assert.equal(typeof loader, 'object');
+  assert.equal(typeof loader.noConflict, 'function');
+  assert.equal(typeof loader.makeDefaultExport, 'boolean');
+  assert.equal(typeof require, 'function');
+  assert.equal(typeof define, 'function');
+  assert.strictEqual(define.amd, undefined);
+  assert.equal(typeof requirejs, 'function');
+  assert.equal(typeof requireModule, 'function');
 });
 
-QUnit.test('no conflict mode', function() {
+QUnit.test('no conflict mode', function(assert) {
   loader.noConflict({
     define: 'newDefine',
     loader: 'newLoader',
     require: 'newRequire'
   });
 
-  equal(define, 'LOL');
-  strictEqual(loader, undefined);
-  equal(require, 'ZOMG');
+  assert.equal(define, 'LOL');
+  assert.strictEqual(loader, undefined);
+  assert.equal(require, 'ZOMG');
 
-  equal(newDefine, this._define);
-  equal(newLoader, this._loader);
-  equal(newRequire, this._require);
+  assert.equal(newDefine, this._define);
+  assert.equal(newLoader, this._loader);
+  assert.equal(newRequire, this._require);
 });
 
-QUnit.test('simple define/require', function() {
+QUnit.test('simple define/require', function(assert) {
   var fooCalled = 0;
 
   define('foo', [], function() {
@@ -87,7 +87,7 @@ QUnit.test('simple define/require', function() {
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     define: 1,
     exports: 0,
     findDeps: 0,
@@ -101,13 +101,13 @@ QUnit.test('simple define/require', function() {
   });
 
   var foo = require('foo');
-  equal(foo, undefined);
-  equal(fooCalled, 1);
-  deepEqual(Object.keys(requirejs.entries), ['foo']);
+  assert.equal(foo, undefined);
+  assert.equal(fooCalled, 1);
+  assert.deepEqual(Object.keys(requirejs.entries), ['foo']);
 
   stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -121,12 +121,12 @@ QUnit.test('simple define/require', function() {
   });
 
   var fooAgain = require('foo');
-  equal(fooAgain, undefined);
-  equal(fooCalled, 1);
+  assert.equal(fooAgain, undefined);
+  assert.equal(fooCalled, 1);
 
   stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -139,10 +139,10 @@ QUnit.test('simple define/require', function() {
     pendingQueueLength: 1
   });
 
-  deepEqual(Object.keys(requirejs.entries), ['foo']);
+  assert.deepEqual(Object.keys(requirejs.entries), ['foo']);
 });
 
-QUnit.test('define without deps', function() {
+QUnit.test('define without deps', function(assert) {
   var fooCalled = 0;
 
   define('foo', function() {
@@ -152,7 +152,7 @@ QUnit.test('define without deps', function() {
   var foo = require('foo');
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -165,21 +165,21 @@ QUnit.test('define without deps', function() {
     pendingQueueLength: 1
   });
 
-  equal(foo, undefined);
-  equal(fooCalled, 1);
-  deepEqual(Object.keys(requirejs.entries), ['foo']);
+  assert.equal(foo, undefined);
+  assert.equal(fooCalled, 1);
+  assert.deepEqual(Object.keys(requirejs.entries), ['foo']);
 });
 
-QUnit.test('multiple define/require', function() {
+QUnit.test('multiple define/require', function(assert) {
   define('foo', [], function() {
 
   });
 
-  deepEqual(Object.keys(requirejs.entries), ['foo']);
+  assert.deepEqual(Object.keys(requirejs.entries), ['foo']);
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 0,
     define: 1,
     exports: 0,
@@ -198,7 +198,7 @@ QUnit.test('multiple define/require', function() {
 
   stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 0,
     define: 2,
     exports: 0,
@@ -211,15 +211,15 @@ QUnit.test('multiple define/require', function() {
     pendingQueueLength: 0
   });
 
-  deepEqual(Object.keys(requirejs.entries), ['foo', 'bar']);
+  assert.deepEqual(Object.keys(requirejs.entries), ['foo', 'bar']);
 });
 
 
-QUnit.test('simple import/export', function() {
-  expect(4);
+QUnit.test('simple import/export', function(assert) {
+  assert.expect(4);
 
   define('foo', ['bar'], function(bar) {
-    equal(bar.baz, 'baz');
+    assert.equal(bar.baz, 'baz');
 
     return bar.baz;
   });
@@ -232,7 +232,7 @@ QUnit.test('simple import/export', function() {
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 0,
     define: 2,
     exports: 0,
@@ -245,11 +245,11 @@ QUnit.test('simple import/export', function() {
     pendingQueueLength: 0
   });
 
-  equal(require('foo'), 'baz');
+  assert.equal(require('foo'), 'baz');
 
   stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -263,11 +263,11 @@ QUnit.test('simple import/export', function() {
   });
 });
 
-QUnit.test('simple import/export with `exports`', function() {
-  expect(4);
+QUnit.test('simple import/export with `exports`', function(assert) {
+  assert.expect(4);
 
   define('foo', ['bar', 'exports'], function(bar, __exports__) {
-    equal(bar.baz, 'baz');
+    assert.equal(bar.baz, 'baz');
 
     __exports__.baz = bar.baz;
   });
@@ -278,7 +278,7 @@ QUnit.test('simple import/export with `exports`', function() {
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 0,
     define: 2,
     exports: 0,
@@ -291,11 +291,11 @@ QUnit.test('simple import/export with `exports`', function() {
     pendingQueueLength: 0
   });
 
-  equal(require('foo').baz, 'baz');
+  assert.equal(require('foo').baz, 'baz');
 
   stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -309,10 +309,10 @@ QUnit.test('simple import/export with `exports`', function() {
   });
 });
 
-QUnit.test('relative import/export', function() {
-  expect(4);
+QUnit.test('relative import/export', function(assert) {
+  assert.expect(4);
   define('foo/a', ['./b'], function(bar) {
-    equal(bar.baz, 'baz');
+    assert.equal(bar.baz, 'baz');
 
     return bar.baz;
   });
@@ -325,7 +325,7 @@ QUnit.test('relative import/export', function() {
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 0,
     define: 2,
     exports: 0,
@@ -338,11 +338,11 @@ QUnit.test('relative import/export', function() {
     pendingQueueLength: 0
   });
 
-  equal(require('foo/a'), 'baz');
+  assert.equal(require('foo/a'), 'baz');
 
   stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -356,11 +356,11 @@ QUnit.test('relative import/export', function() {
   });
 });
 
-QUnit.test('deep nested relative import/export', function() {
-  expect(4);
+QUnit.test('deep nested relative import/export', function(assert) {
+  assert.expect(4);
 
   define('foo/a/b/c', ['../../b/b/c'], function(bar) {
-    equal(bar.baz, 'baz');
+    assert.equal(bar.baz, 'baz');
 
     return bar.baz;
   });
@@ -373,7 +373,7 @@ QUnit.test('deep nested relative import/export', function() {
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 0,
     define: 2,
     exports: 0,
@@ -386,11 +386,11 @@ QUnit.test('deep nested relative import/export', function() {
     pendingQueueLength: 0
   });
 
-  equal(require('foo/a/b/c'), 'baz');
+  assert.equal(require('foo/a/b/c'), 'baz');
 
   stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -404,20 +404,20 @@ QUnit.test('deep nested relative import/export', function() {
   });
 });
 
-QUnit.test('assigns default when makeDefaultExport option enabled', function() {
-  equal(loader.makeDefaultExport, true);
+QUnit.test('assigns default when makeDefaultExport option enabled', function(assert) {
+  assert.equal(loader.makeDefaultExport, true);
 
   var theObject = {};
   define('foo', ['require', 'exports', 'module'], function() {
     return theObject;
   });
-  ok(('default' in require('foo')));
-  equal(require('foo'), theObject);
-  equal(theObject.default, theObject);
+  assert.ok('default' in require('foo'));
+  assert.equal(require('foo'), theObject);
+  assert.equal(theObject.default, theObject);
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -431,19 +431,19 @@ QUnit.test('assigns default when makeDefaultExport option enabled', function() {
   });
 });
 
-QUnit.test('doesn\'t assign default when makeDefaultExport option is disabled', function() {
+QUnit.test('doesn\'t assign default when makeDefaultExport option is disabled', function(assert) {
   var _loaderMakeDefaultExport = loader.makeDefaultExport;
   loader.makeDefaultExport = false;
   var theObject = {};
   define('foo', ['require', 'exports', 'module'], function() {
     return theObject;
   });
-  ok(!('default' in require('foo')));
-  deepEqual(require('foo'), {});
+  assert.ok(!('default' in require('foo')));
+  assert.deepEqual(require('foo'), {});
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -460,20 +460,20 @@ QUnit.test('doesn\'t assign default when makeDefaultExport option is disabled', 
   loader.makeDefaultExport = _loaderMakeDefaultExport;
 });
 
-QUnit.test('doesn\'t assign default when makeDefaultExport option is enabled and default is already defined', function() {
-  equal(loader.makeDefaultExport, true);
+QUnit.test('doesn\'t assign default when makeDefaultExport option is enabled and default is already defined', function(assert) {
+  assert.equal(loader.makeDefaultExport, true);
 
   var theObject = { default: 'bar' };
   define('foo', ['require', 'exports', 'module'], function() {
     return theObject;
   });
-  ok(('default' in require('foo')));
-  equal(require('foo').default, 'bar');
-  deepEqual(require('foo'), { default: 'bar' });
+  assert.ok(('default' in require('foo')));
+  assert.equal(require('foo').default, 'bar');
+  assert.deepEqual(require('foo'), { default: 'bar' });
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -487,7 +487,7 @@ QUnit.test('doesn\'t assign default when makeDefaultExport option is enabled and
   });
 });
 
-QUnit.test('incorrect lookup paths should fail', function() {
+QUnit.test('incorrect lookup paths should fail', function(assert) {
 
   define('foo/isolated-container', [], function() {
     return 'container';
@@ -500,17 +500,17 @@ QUnit.test('incorrect lookup paths should fail', function() {
     };
   });
 
-  throws(function() {
+  assert.throws(function() {
     return require('foo');
   }, 'Could not find module isolated-container');
 
 });
 
-QUnit.test('top-level relative import/export', function() {
-  expect(3);
+QUnit.test('top-level relative import/export', function(assert) {
+  assert.expect(3);
 
   define('foo', ['./bar'], function(bar) {
-    equal(bar.baz, 'baz');
+    assert.equal(bar.baz, 'baz');
 
     return bar.baz;
   });
@@ -521,11 +521,11 @@ QUnit.test('top-level relative import/export', function() {
     };
   });
 
-  equal(require('foo'), 'baz');
+  assert.equal(require('foo'), 'baz');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -539,7 +539,7 @@ QUnit.test('top-level relative import/export', function() {
   });
 });
 
-QUnit.test('runtime cycles', function() {
+QUnit.test('runtime cycles', function(assert) {
   define('foo', ['bar', 'exports'], function(bar, __exports__) {
     __exports__.quz = function() {
       return bar.baz;
@@ -557,7 +557,7 @@ QUnit.test('runtime cycles', function() {
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -570,14 +570,14 @@ QUnit.test('runtime cycles', function() {
     pendingQueueLength: 2
   });
 
-  ok(foo.quz());
-  ok(bar.baz());
+  assert.ok(foo.quz());
+  assert.ok(bar.baz());
 
-  equal(foo.quz(), bar.baz, 'cycle foo depends on bar');
-  equal(bar.baz(), foo.quz, 'cycle bar depends on foo');
+  assert.equal(foo.quz(), bar.baz, 'cycle foo depends on bar');
+  assert.equal(bar.baz(), foo.quz, 'cycle bar depends on foo');
 });
 
-QUnit.test('already evaluated modules are not pushed into the queue', function() {
+QUnit.test('already evaluated modules are not pushed into the queue', function(assert) {
   define('foo', ['bar', 'exports'], function(bar, __exports__) {
     __exports__.quz = function() {
       return bar.baz;
@@ -594,7 +594,7 @@ QUnit.test('already evaluated modules are not pushed into the queue', function()
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -611,7 +611,7 @@ QUnit.test('already evaluated modules are not pushed into the queue', function()
 
   stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -625,7 +625,7 @@ QUnit.test('already evaluated modules are not pushed into the queue', function()
   });
 });
 
-QUnit.test('same pending modules should not be pushed to the queue more than once', function() {
+QUnit.test('same pending modules should not be pushed to the queue more than once', function(assert) {
   define('foo', ['bar', 'exports'], function(bar, __exports__) {
     __exports__.quz = function() {
       return bar.baz;
@@ -642,7 +642,7 @@ QUnit.test('same pending modules should not be pushed to the queue more than onc
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -656,7 +656,7 @@ QUnit.test('same pending modules should not be pushed to the queue more than onc
   });
 });
 
-QUnit.test('basic CJS mode', function() {
+QUnit.test('basic CJS mode', function(assert) {
   define('a/foo', ['require', 'exports', 'module'], function(require, exports, module) {
     module.exports = {
       bar: require('./bar').name
@@ -671,7 +671,7 @@ QUnit.test('basic CJS mode', function() {
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -684,19 +684,19 @@ QUnit.test('basic CJS mode', function() {
     pendingQueueLength: 2
   });
 
-  equal(foo.bar, 'bar');
+  assert.equal(foo.bar, 'bar');
 });
 
-QUnit.test('pass default deps if arguments are expected and deps not passed', function() {
+QUnit.test('pass default deps if arguments are expected and deps not passed', function(assert) {
   // this is intentionally testing the array-less form
   define('foo', function(require, exports, module) { // jshint ignore:line
-    equal(arguments.length, 3);
+    assert.equal(arguments.length, 3);
   });
 
   require('foo');
 });
 
-QUnit.test('if factory returns a value it is used as export', function() {
+QUnit.test('if factory returns a value it is used as export', function(assert) {
   define('foo', ['require', 'exports', 'module'], function() {
     return {
       bar: 'bar'
@@ -707,7 +707,7 @@ QUnit.test('if factory returns a value it is used as export', function() {
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -720,10 +720,10 @@ QUnit.test('if factory returns a value it is used as export', function() {
     pendingQueueLength: 1
   });
 
-  equal(foo.bar, 'bar');
+  assert.equal(foo.bar, 'bar');
 });
 
-QUnit.test('if a module has no default property assume the return is the default', function() {
+QUnit.test('if a module has no default property assume the return is the default', function(assert) {
   define('foo', [], function() {
     return {
       bar: 'bar'
@@ -734,7 +734,7 @@ QUnit.test('if a module has no default property assume the return is the default
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -747,11 +747,11 @@ QUnit.test('if a module has no default property assume the return is the default
     pendingQueueLength: 1
   });
 
-  equal(foo.bar, 'bar');
+  assert.equal(foo.bar, 'bar');
 });
 
 
-QUnit.test('if a CJS style module has no default export assume module.exports is the default', function() {
+QUnit.test('if a CJS style module has no default export assume module.exports is the default', function(assert) {
   define('Foo', ['require', 'exports', 'module'], function(require, exports, module) {
     module.exports = function Foo() {
       this.bar = 'bar';
@@ -761,10 +761,10 @@ QUnit.test('if a CJS style module has no default export assume module.exports is
   var Foo = require('Foo')['default'];
   var foo = new Foo();
 
-  equal(foo.bar, 'bar');
+  assert.equal(foo.bar, 'bar');
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -779,18 +779,18 @@ QUnit.test('if a CJS style module has no default export assume module.exports is
 });
 
 
-QUnit.test('if a module has no default property assume its export is default (function)', function() {
+QUnit.test('if a module has no default property assume its export is default (function)', function(assert) {
   var theFunction = function theFunction() {};
   define('foo', ['require', 'exports', 'module'], function() {
     return theFunction;
   });
 
-  equal(require('foo')['default'], theFunction);
-  equal(require('foo'), theFunction);
+  assert.equal(require('foo')['default'], theFunction);
+  assert.equal(require('foo'), theFunction);
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -804,18 +804,18 @@ QUnit.test('if a module has no default property assume its export is default (fu
   });
 });
 
-QUnit.test('if a module has no default property assume its export is default (object)', function() {
+QUnit.test('if a module has no default property assume its export is default (object)', function(assert) {
   var theObject = {};
   define('foo', ['require', 'exports', 'module'], function() {
     return theObject;
   });
 
-  equal(require('foo')['default'], theObject);
-  equal(require('foo'), theObject);
+  assert.equal(require('foo')['default'], theObject);
+  assert.equal(require('foo'), theObject);
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -829,18 +829,18 @@ QUnit.test('if a module has no default property assume its export is default (ob
   });
 });
 
-QUnit.test('does not add default if export is frozen', function() {
+QUnit.test('does not add default if export is frozen', function(assert) {
   var theObject = Object.freeze({});
   define('foo', ['require', 'exports', 'module'], function() {
     return theObject;
   });
 
-  ok(!('default' in require('foo')));
-  equal(require('foo'), theObject);
+  assert.ok(!('default' in require('foo')));
+  assert.equal(require('foo'), theObject);
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -854,18 +854,18 @@ QUnit.test('does not add default if export is frozen', function() {
   });
 });
 
-QUnit.test('does not add default if export is sealed', function() {
+QUnit.test('does not add default if export is sealed', function(assert) {
   var theObject = Object.seal({ derp: {} });
   define('foo', ['require', 'exports', 'module'], function() {
     return theObject;
   });
 
-  ok(!('default' in require('foo')));
-  equal(require('foo'), theObject);
+  assert.ok(!('default' in require('foo')));
+  assert.equal(require('foo'), theObject);
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -879,19 +879,19 @@ QUnit.test('does not add default if export is sealed', function() {
   });
 });
 
-QUnit.test('has good error message for missing module', function() {
+QUnit.test('has good error message for missing module', function(assert) {
   var theFunction = function theFunction() {};
   define('foo', ['apple'], function() {
     return theFunction;
   });
 
-  throws(function() {
+  assert.throws(function() {
     require('foo');
   }, /Could not find module `apple` imported from `foo`/);
 });
 
-QUnit.test('provides good error message when an un-named AMD module is provided', function() {
-  throws(function() {
+QUnit.test('provides good error message when an un-named AMD module is provided', function(assert) {
+  assert.throws(function() {
     define(function() {
 
     });
@@ -899,23 +899,23 @@ QUnit.test('provides good error message when an un-named AMD module is provided'
 });
 
 
-QUnit.test('throws when accessing parent module of root', function() {
-  expect(2);
+QUnit.test('throws when accessing parent module of root', function(assert) {
+  assert.expect(2);
 
   define('foo', ['../a'], function() {});
 
-  throws(function() {
+  assert.throws(function() {
     require('foo');
   }, /Cannot access parent module of root/);
 
   define('bar/baz', ['../../a'], function() {});
 
-  throws(function() {
+  assert.throws(function() {
     require('bar/baz');
   }, /Cannot access parent module of root/);
 });
 
-QUnit.test('relative CJS esq require', function() {
+QUnit.test('relative CJS esq require', function(assert) {
   define('foo/a', ['require'], function(require) {
     return require('./b');
   });
@@ -929,11 +929,11 @@ QUnit.test('relative CJS esq require', function() {
     return 'c-content';
   });
 
-  equal(require('foo/a'), 'c-content');
+  assert.equal(require('foo/a'), 'c-content');
 });
 
 
-QUnit.test('relative CJS esq require (with exports and module);', function() {
+QUnit.test('relative CJS esq require (with exports and module);', function(assert) {
   define('foo/a', ['module', 'exports', 'require'], function(module, exports, require) {
     module.exports = require('./b');
   });
@@ -946,11 +946,11 @@ QUnit.test('relative CJS esq require (with exports and module);', function() {
     module.exports = 'c-content';
   });
 
-  equal(require('foo/a'), 'c-content');
+  assert.equal(require('foo/a'), 'c-content');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 3,
     define: 3,
     exports: 3,
@@ -964,7 +964,7 @@ QUnit.test('relative CJS esq require (with exports and module);', function() {
   });
 });
 
-QUnit.test('foo foo/index are the same thing', function() {
+QUnit.test('foo foo/index are the same thing', function(assert) {
   define('foo/index', [] , function() {
     return { 'default': 'hi' };
   });
@@ -972,14 +972,14 @@ QUnit.test('foo foo/index are the same thing', function() {
   define('foo', [ ], define.alias('foo/index'));
 
   define('bar', ['foo', 'foo/index'] , function(foo, fooIndex) {
-    deepEqual(foo, fooIndex);
+    assert.deepEqual(foo, fooIndex);
   });
 
-  deepEqual(require('foo'), require('foo/index'));
+  assert.deepEqual(require('foo'), require('foo/index'));
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 3,
     exports: 1,
@@ -993,20 +993,20 @@ QUnit.test('foo foo/index are the same thing', function() {
   });
 });
 
-QUnit.test('foo automatically falls back to foo/index', function() {
+QUnit.test('foo automatically falls back to foo/index', function(assert) {
   define('foo/index', [] , function() {
     return { 'default': 'hi' };
   });
 
   define('bar', ['foo', 'foo/index'] , function(foo, fooIndex) {
-    deepEqual(foo, fooIndex);
+    assert.deepEqual(foo, fooIndex);
   });
 
-  deepEqual(require('foo'), require('foo/index'));
+  assert.deepEqual(require('foo'), require('foo/index'));
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 2,
     exports: 1,
@@ -1020,7 +1020,7 @@ QUnit.test('foo automatically falls back to foo/index', function() {
   });
 });
 
-QUnit.test('automatic /index fallback no ambiguity', function() {
+QUnit.test('automatic /index fallback no ambiguity', function(assert) {
   define('foo/index', [], function() {
     return 'I AM foo/index';
   });
@@ -1029,13 +1029,13 @@ QUnit.test('automatic /index fallback no ambiguity', function() {
     return 'I AM bar with: ' + foo;
   });
 
-  equal(require('foo'), 'I AM foo/index');
-  equal(require('foo/index'), 'I AM foo/index');
-  equal(require('bar'), 'I AM bar with: I AM foo/index');
+  assert.equal(require('foo'), 'I AM foo/index');
+  assert.equal(require('foo/index'), 'I AM foo/index');
+  assert.equal(require('bar'), 'I AM bar with: I AM foo/index');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -1049,7 +1049,7 @@ QUnit.test('automatic /index fallback no ambiguity', function() {
   });
 });
 
-QUnit.test('automatic /index fallback is not used if module is defined', function() {
+QUnit.test('automatic /index fallback is not used if module is defined', function(assert) {
   define('foo', [], function() {
     return 'I AM foo';
   });
@@ -1062,12 +1062,12 @@ QUnit.test('automatic /index fallback is not used if module is defined', functio
     return 'I AM bar with: ' + foo;
   });
 
-  equal(require('foo'), 'I AM foo');
-  equal(require('foo/index'), 'I AM foo/index');
-  equal(require('bar'), 'I AM bar with: I AM foo');
+  assert.equal(require('foo'), 'I AM foo');
+  assert.equal(require('foo/index'), 'I AM foo/index');
+  assert.equal(require('bar'), 'I AM bar with: I AM foo');
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 3,
     define: 3,
     exports: 3,
@@ -1081,28 +1081,28 @@ QUnit.test('automatic /index fallback is not used if module is defined', functio
   });
 });
 
-QUnit.test('unsee', function() {
+QUnit.test('unsee', function(assert) {
   var counter = 0;
   define('foo', [] , function() {
     counter++;
     return { 'default': 'hi' };
   });
 
-  equal(counter, 0);
+  assert.equal(counter, 0);
   require('foo');
-  equal(counter, 1);
+  assert.equal(counter, 1);
   require('foo');
-  equal(counter, 1);
+  assert.equal(counter, 1);
   require.unsee('foo');
-  equal(counter, 1);
+  assert.equal(counter, 1);
   require('foo');
-  equal(counter, 2);
+  assert.equal(counter, 2);
   require('foo');
-  equal(counter, 2);
+  assert.equal(counter, 2);
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 1,
     exports: 2,
@@ -1116,7 +1116,7 @@ QUnit.test('unsee', function() {
   });
 });
 
-QUnit.test('manual /index fallback no ambiguity', function() {
+QUnit.test('manual /index fallback no ambiguity', function(assert) {
   define('foo/index', [], function() {
     return 'I AM foo/index';
   });
@@ -1127,13 +1127,13 @@ QUnit.test('manual /index fallback no ambiguity', function() {
     return 'I AM bar with: ' + foo;
   });
 
-  equal(require('foo'), 'I AM foo/index');
-  equal(require('foo/index'), 'I AM foo/index');
-  equal(require('bar'), 'I AM bar with: I AM foo/index');
+  assert.equal(require('foo'), 'I AM foo/index');
+  assert.equal(require('foo/index'), 'I AM foo/index');
+  assert.equal(require('bar'), 'I AM bar with: I AM foo/index');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 3,
     exports: 2,
@@ -1147,7 +1147,7 @@ QUnit.test('manual /index fallback no ambiguity', function() {
   });
 });
 
-QUnit.test('manual /index fallback with ambiguity (alias after)', function() {
+QUnit.test('manual /index fallback with ambiguity (alias after)', function(assert) {
   var counts = {
     foo: 0,
     'foo/index': 0
@@ -1169,18 +1169,18 @@ QUnit.test('manual /index fallback with ambiguity (alias after)', function() {
     return 'I AM bar with: ' + foo;
   });
 
-  equal(require('foo'), 'I AM foo/index');
-  equal(require('foo/index'), 'I AM foo/index');
-  equal(require('bar'), 'I AM bar with: I AM foo/index');
+  assert.equal(require('foo'), 'I AM foo/index');
+  assert.equal(require('foo/index'), 'I AM foo/index');
+  assert.equal(require('bar'), 'I AM bar with: I AM foo/index');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(counts, {
+  assert.deepEqual(counts, {
     foo: 0,
     'foo/index': 1
   });
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     define: 4,
     exports: 2,
     findDeps: 2,
@@ -1194,7 +1194,7 @@ QUnit.test('manual /index fallback with ambiguity (alias after)', function() {
   });
 });
 
-QUnit.test('manual /index fallback with ambiguity (alias after all defines but before require)', function() {
+QUnit.test('manual /index fallback with ambiguity (alias after all defines but before require)', function(assert) {
   define('foo', [], function() {
     return 'I AM foo';
   });
@@ -1209,13 +1209,13 @@ QUnit.test('manual /index fallback with ambiguity (alias after all defines but b
 
   define('foo', define.alias('foo/index'));
 
-  equal(require('foo'), 'I AM foo/index');
-  equal(require('foo/index'), 'I AM foo/index');
-  equal(require('bar'), 'I AM bar with: I AM foo/index');
+  assert.equal(require('foo'), 'I AM foo/index');
+  assert.equal(require('foo/index'), 'I AM foo/index');
+  assert.equal(require('bar'), 'I AM bar with: I AM foo/index');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 4,
     exports: 2,
@@ -1229,7 +1229,7 @@ QUnit.test('manual /index fallback with ambiguity (alias after all defines but b
   });
 });
 
-QUnit.test('alias entries share same module instance', function() {
+QUnit.test('alias entries share same module instance', function(assert) {
   var count = 0;
   define('foo', define.alias('foo/index'));
 
@@ -1237,16 +1237,16 @@ QUnit.test('alias entries share same module instance', function() {
     count++;
   });
 
-  equal(count, 0);
+  assert.equal(count, 0);
   require('foo');
-  equal(count, 1);
+  assert.equal(count, 1);
 
   require('foo/index');
-  equal(count, 1, 'second require should use existing instance');
+  assert.equal(count, 1, 'second require should use existing instance');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 2,
     exports: 1,
@@ -1260,7 +1260,7 @@ QUnit.test('alias entries share same module instance', function() {
   });
 });
 
-QUnit.test('alias with 2 arguments entries share same module instance', function() {
+QUnit.test('alias with 2 arguments entries share same module instance', function(assert) {
   var count = 0;
   define.alias('foo/index', 'bar');
 
@@ -1269,17 +1269,17 @@ QUnit.test('alias with 2 arguments entries share same module instance', function
     return {};
   });
 
-  equal(count, 0);
+  assert.equal(count, 0);
   var bar = require('bar');
-  equal(count, 1);
+  assert.equal(count, 1);
 
   var fooIndex = require('foo/index');
-  equal(count, 1, 'second require should use existing instance');
+  assert.equal(count, 1, 'second require should use existing instance');
 
-  strictEqual(bar, fooIndex);
+  assert.strictEqual(bar, fooIndex);
 });
 
-QUnit.test('/index fallback + unsee', function() {
+QUnit.test('/index fallback + unsee', function(assert) {
   var count = 0;
   define('foo/index', [], function() {
     count++;
@@ -1288,24 +1288,24 @@ QUnit.test('/index fallback + unsee', function() {
   define('foo', define.alias('foo/index'));
 
   require('foo/index');
-  equal(count, 1);
+  assert.equal(count, 1);
 
   require('foo/index');
-  equal(count, 1);
+  assert.equal(count, 1);
 
   require.unsee('foo/index');
   require('foo/index');
 
-  equal(count, 2);
+  assert.equal(count, 2);
 
   require.unsee('foo');
   require('foo');
 
-  equal(count, 3);
+  assert.equal(count, 3);
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 3,
     define: 2,
     exports: 3,
@@ -1319,7 +1319,7 @@ QUnit.test('/index fallback + unsee', function() {
   });
 });
 
-QUnit.test('alias with target \w deps', function() {
+QUnit.test('alias with target \w deps', function(assert) {
   define('foo', ['bar'], function(bar) {
     return bar;
   });
@@ -1330,11 +1330,11 @@ QUnit.test('alias with target \w deps', function() {
 
   define('quz', define.alias('foo'));
 
-  equal(require('quz'), 'I AM BAR');
+  assert.equal(require('quz'), 'I AM BAR');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 3,
     exports: 2,
@@ -1348,7 +1348,7 @@ QUnit.test('alias with target \w deps', function() {
   });
 });
 
-QUnit.test('alias chain (simple)', function() {
+QUnit.test('alias chain (simple)', function(assert) {
   define('bar', [], function() {
     return 'I AM BAR';
   });
@@ -1356,11 +1356,11 @@ QUnit.test('alias chain (simple)', function() {
   define('quz', define.alias('foo'));
   define('foo', define.alias('bar'));
 
-  equal(require('quz'), 'I AM BAR');
+  assert.equal(require('quz'), 'I AM BAR');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 3,
     exports: 1,
@@ -1374,7 +1374,7 @@ QUnit.test('alias chain (simple)', function() {
   });
 });
 
-QUnit.test('alias chain (simple) with implicit /index', function() {
+QUnit.test('alias chain (simple) with implicit /index', function(assert) {
   define('bar/index', [], function() {
     return 'I AM BAR';
   });
@@ -1382,14 +1382,14 @@ QUnit.test('alias chain (simple) with implicit /index', function() {
   define('quz', define.alias('foo'));
   define('foo', define.alias('bar'));
 
-  equal(require('quz'), 'I AM BAR');
-  throws(function() {
+  assert.equal(require('quz'), 'I AM BAR');
+  assert.throws(function() {
     require('quz/index');
   }, 'Could not find module `quz/index` imported from `(require)`');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 3,
     exports: 1,
@@ -1403,7 +1403,7 @@ QUnit.test('alias chain (simple) with implicit /index', function() {
   });
 });
 
-QUnit.test('alias chain (long)', function() {
+QUnit.test('alias chain (long)', function(assert) {
   define('bar', [], function() {
     return 'I AM BAR';
   });
@@ -1413,11 +1413,11 @@ QUnit.test('alias chain (long)', function() {
   define('baz', define.alias('quz'));
   define('bozo', define.alias('baz'));
 
-  equal(require('bozo'), 'I AM BAR');
+  assert.equal(require('bozo'), 'I AM BAR');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 5,
     exports: 1,
@@ -1431,7 +1431,7 @@ QUnit.test('alias chain (long)', function() {
   });
 });
 
-QUnit.test('alias chains are lazy', function() {
+QUnit.test('alias chains are lazy', function(assert) {
   define('bar', [], function() {
     return 'I AM BAR';
   });
@@ -1447,15 +1447,15 @@ QUnit.test('alias chains are lazy', function() {
   define('bozo', define.alias('baz'));
   define('bozo2', define.alias('baz'));
 
-  equal(require('bozo'), 'I AM BAR');
+  assert.equal(require('bozo'), 'I AM BAR');
 
   define('foo', define.alias('bar2'));
 
-  equal(require('bozo'), 'I AM BAR2');
+  assert.equal(require('bozo'), 'I AM BAR2');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 8,
     exports: 2,
@@ -1469,7 +1469,7 @@ QUnit.test('alias chains are lazy', function() {
   });
 });
 
-QUnit.test('alias chains propogate unsee', function() {
+QUnit.test('alias chains propogate unsee', function(assert) {
   var counter = 0;
 
   define('bar', [], function() {
@@ -1480,19 +1480,19 @@ QUnit.test('alias chains propogate unsee', function() {
   define('a', define.alias('bar'));
   define('b', define.alias('a'));
 
-  equal(counter, 0);
-  equal(require('b'), 'I AM BAR');
-  equal(counter, 1);
-  equal(require('b'), 'I AM BAR');
-  equal(counter, 1);
+  assert.equal(counter, 0);
+  assert.equal(require('b'), 'I AM BAR');
+  assert.equal(counter, 1);
+  assert.equal(require('b'), 'I AM BAR');
+  assert.equal(counter, 1);
   require.unsee('b');
-  equal(counter, 1);
-  equal(require('b'), 'I AM BAR');
-  equal(counter, 2);
+  assert.equal(counter, 1);
+  assert.equal(require('b'), 'I AM BAR');
+  assert.equal(counter, 2);
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 3,
     exports: 2,
@@ -1506,7 +1506,7 @@ QUnit.test('alias chains propogate unsee', function() {
   });
 });
 
-QUnit.test('alias chains propogate unsee with implicit /index', function() {
+QUnit.test('alias chains propogate unsee with implicit /index', function(assert) {
   var counter = 0;
 
   define('bar/index', [], function() {
@@ -1517,19 +1517,19 @@ QUnit.test('alias chains propogate unsee with implicit /index', function() {
   define('a', define.alias('bar'));
   define('b', define.alias('a'));
 
-  equal(counter, 0);
-  equal(require('b'), 'I AM BAR');
-  equal(counter, 1);
-  equal(require('b'), 'I AM BAR');
-  equal(counter, 1);
+  assert.equal(counter, 0);
+  assert.equal(require('b'), 'I AM BAR');
+  assert.equal(counter, 1);
+  assert.equal(require('b'), 'I AM BAR');
+  assert.equal(counter, 1);
   require.unsee('b');
-  equal(counter, 1);
-  equal(require('b'), 'I AM BAR');
-  equal(counter, 2);
+  assert.equal(counter, 1);
+  assert.equal(require('b'), 'I AM BAR');
+  assert.equal(counter, 2);
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 3,
     exports: 2,
@@ -1543,7 +1543,7 @@ QUnit.test('alias chains propogate unsee with implicit /index', function() {
   });
 });
 
-QUnit.test('alias chaining with relative deps works', function() {
+QUnit.test('alias chaining with relative deps works', function(assert) {
   define('foo/baz', [], function() {
     return 'I AM baz';
   });
@@ -1555,13 +1555,13 @@ QUnit.test('alias chaining with relative deps works', function() {
   define('foo', define.alias('foo/index'));
   define('bar', define.alias('foo'));
 
-  equal(require('foo'), 'I AM foo/index: I AM baz');
-  equal(require('foo/index'), 'I AM foo/index: I AM baz');
-  equal(require('bar'), 'I AM foo/index: I AM baz');
+  assert.equal(require('foo'), 'I AM foo/index: I AM baz');
+  assert.equal(require('foo/index'), 'I AM foo/index: I AM baz');
+  assert.equal(require('bar'), 'I AM foo/index: I AM baz');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 4,
     exports: 2,
@@ -1575,7 +1575,7 @@ QUnit.test('alias chaining with relative deps works', function() {
   });
 });
 
-QUnit.test('wrapModules is called when present', function() {
+QUnit.test('wrapModules is called when present', function(assert) {
   var fooCalled = 0;
   var annotatorCalled = 0;
   var _loaderWrapModules = loader.wrapModules;
@@ -1587,13 +1587,13 @@ QUnit.test('wrapModules is called when present', function() {
     fooCalled++;
   });
 
-  equal(annotatorCalled, 0);
+  assert.equal(annotatorCalled, 0);
   require('foo');
-  equal(annotatorCalled, 1);
+  assert.equal(annotatorCalled, 1);
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 1,
     define: 1,
     exports: 1,
@@ -1610,7 +1610,7 @@ QUnit.test('wrapModules is called when present', function() {
   loader.wrapModules = _loaderWrapModules;
 });
 
-QUnit.test('import require from "require" works', function () {
+QUnit.test('import require from "require" works', function (assert) {
   define('foo/baz', function () {
     return 'I AM baz';
   });
@@ -1619,11 +1619,11 @@ QUnit.test('import require from "require" works', function () {
     return require.default('./baz');
   });
 
-  equal(require('foo'), 'I AM baz');
+  assert.equal(require('foo'), 'I AM baz');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -1637,7 +1637,7 @@ QUnit.test('import require from "require" works', function () {
   });
 });
 
-QUnit.test('require has a has method', function () {
+QUnit.test('require has a has method', function (assert) {
   define('foo/baz/index', function () {
     return 'I AM baz';
   });
@@ -1648,11 +1648,11 @@ QUnit.test('require has a has method', function () {
     }
   });
 
-  equal(require('foo'), 'I AM baz');
+  assert.equal(require('foo'), 'I AM baz');
 
   var stats = statsForMonitor('loaderjs', tree);
 
-  deepEqual(stats, {
+  assert.deepEqual(stats, {
     findDeps: 2,
     define: 2,
     exports: 2,
@@ -1666,21 +1666,21 @@ QUnit.test('require has a has method', function () {
   });
 });
 
-QUnit.test('broken modules are never returned', function() {
+QUnit.test('broken modules are never returned', function(assert) {
   define('foo', function() {
     throw new Error('I am a broken module');
   });
 
-  throws(function() {
+  assert.throws(function() {
     require('foo');
   }, /I am a broken module/, 'The first time');
 
-  throws(function() {
+  assert.throws(function() {
     require('foo');
   }, /I am a broken module/, 'The second time');
 });
 
-QUnit.test('modules with broken dependencies are never returned', function() {
+QUnit.test('modules with broken dependencies are never returned', function(assert) {
   define('foo', ['other'], function() {
     throw new Error('I am a broken module');
   });
@@ -1698,11 +1698,11 @@ QUnit.test('modules with broken dependencies are never returned', function() {
   });
 
 
-  throws(function() {
+  assert.throws(function() {
     require('bar');
   }, /I am a broken module/, 'The first time');
 
-  throws(function() {
+  assert.throws(function() {
     require('bar');
   }, /I am a broken module/, 'The second time');
 });
