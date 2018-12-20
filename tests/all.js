@@ -34,7 +34,7 @@ function statsForMonitor(monitor, tree) {
 }
 
 QUnit.module('loader.js api', {
-  setup: function() {
+  beforeEach: function() {
     this._define = define;
     this._loader = loader;
     this._require = require;
@@ -42,7 +42,7 @@ QUnit.module('loader.js api', {
     tree = new Heimdall.Tree(heimdall);
   },
 
-  teardown: function() {
+  afterEach: function() {
     define = this._define;
     loader = this._loader;
     require = this._require;
