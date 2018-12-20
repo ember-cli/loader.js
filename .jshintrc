@@ -13,7 +13,7 @@
     "expect",
     "ok",
     "throws",
-    "test",
+    "QUnit",
     "-Promise",
     "module"
   ],

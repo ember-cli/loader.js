@@ -33,7 +33,7 @@ function statsForMonitor(monitor, tree) {
   return stats;
 }
 
-module('loader.js api', {
+QUnit.module('loader.js api', {
   setup: function() {
     this._define = define;
     this._loader = loader;
@@ -51,7 +51,7 @@ module('loader.js api', {
   }
 });
 
-test('has api', function() {
+QUnit.test('has api', function() {
   equal(typeof loader, 'object');
   equal(typeof loader.noConflict, 'function');
   equal(typeof loader.makeDefaultExport, 'boolean');
@@ -62,7 +62,7 @@ test('has api', function() {
   equal(typeof requireModule, 'function');
 });
 
-test('no conflict mode', function() {
+QUnit.test('no conflict mode', function() {
   loader.noConflict({
     define: 'newDefine',
     loader: 'newLoader',
@@ -78,7 +78,7 @@ test('no conflict mode', function() {
   equal(newRequire, this._require);
 });
 
-test('simple define/require', function() {
+QUnit.test('simple define/require', function() {
   var fooCalled = 0;
 
   define('foo', [], function() {
@@ -142,7 +142,7 @@ test('simple define/require', function() {
   deepEqual(Object.keys(requirejs.entries), ['foo']);
 });
 
-test('define without deps', function() {
+QUnit.test('define without deps', function() {
   var fooCalled = 0;
 
   define('foo', function() {
@@ -170,7 +170,7 @@ test('define without deps', function() {
   deepEqual(Object.keys(requirejs.entries), ['foo']);
 });
 
-test('multiple define/require', function() {
+QUnit.test('multiple define/require', function() {
   define('foo', [], function() {
 
   });
@@ -215,7 +215,7 @@ test('multiple define/require', function() {
 });
 
 
-test('simple import/export', function() {
+QUnit.test('simple import/export', function() {
   expect(4);
 
   define('foo', ['bar'], function(bar) {
@@ -263,7 +263,7 @@ test('simple import/export', function() {
   });
 });
 
-test('simple import/export with `exports`', function() {
+QUnit.test('simple import/export with `exports`', function() {
   expect(4);
 
   define('foo', ['bar', 'exports'], function(bar, __exports__) {
@@ -309,7 +309,7 @@ test('simple import/export with `exports`', function() {
   });
 });
 
-test('relative import/export', function() {
+QUnit.test('relative import/export', function() {
   expect(4);
   define('foo/a', ['./b'], function(bar) {
     equal(bar.baz, 'baz');
@@ -356,7 +356,7 @@ test('relative import/export', function() {
   });
 });
 
-test('deep nested relative import/export', function() {
+QUnit.test('deep nested relative import/export', function() {
   expect(4);
 
   define('foo/a/b/c', ['../../b/b/c'], function(bar) {
@@ -404,7 +404,7 @@ test('deep nested relative import/export', function() {
   });
 });
 
-test('assigns default when makeDefaultExport option enabled', function() {
+QUnit.test('assigns default when makeDefaultExport option enabled', function() {
   equal(loader.makeDefaultExport, true);
 
   var theObject = {};
@@ -431,7 +431,7 @@ test('assigns default when makeDefaultExport option enabled', function() {
   });
 });
 
-test('doesn\'t assign default when makeDefaultExport option is disabled', function() {
+QUnit.test('doesn\'t assign default when makeDefaultExport option is disabled', function() {
   var _loaderMakeDefaultExport = loader.makeDefaultExport;
   loader.makeDefaultExport = false;
   var theObject = {};
@@ -460,7 +460,7 @@ test('doesn\'t assign default when makeDefaultExport option is disabled', functi
   loader.makeDefaultExport = _loaderMakeDefaultExport;
 });
 
-test('doesn\'t assign default when makeDefaultExport option is enabled and default is already defined', function() {
+QUnit.test('doesn\'t assign default when makeDefaultExport option is enabled and default is already defined', function() {
   equal(loader.makeDefaultExport, true);
 
   var theObject = { default: 'bar' };
@@ -487,7 +487,7 @@ test('doesn\'t assign default when makeDefaultExport option is enabled and defau
   });
 });
 
-test('incorrect lookup paths should fail', function() {
+QUnit.test('incorrect lookup paths should fail', function() {
 
   define('foo/isolated-container', [], function() {
     return 'container';
@@ -506,7 +506,7 @@ test('incorrect lookup paths should fail', function() {
 
 });
 
-test('top-level relative import/export', function() {
+QUnit.test('top-level relative import/export', function() {
   expect(3);
 
   define('foo', ['./bar'], function(bar) {
@@ -539,7 +539,7 @@ test('top-level relative import/export', function() {
   });
 });
 
-test('runtime cycles', function() {
+QUnit.test('runtime cycles', function() {
   define('foo', ['bar', 'exports'], function(bar, __exports__) {
     __exports__.quz = function() {
       return bar.baz;
@@ -577,7 +577,7 @@ test('runtime cycles', function() {
   equal(bar.baz(), foo.quz, 'cycle bar depends on foo');
 });
 
-test('already evaluated modules are not pushed into the queue', function() {
+QUnit.test('already evaluated modules are not pushed into the queue', function() {
   define('foo', ['bar', 'exports'], function(bar, __exports__) {
     __exports__.quz = function() {
       return bar.baz;
@@ -625,7 +625,7 @@ test('already evaluated modules are not pushed into the queue', function() {
   });
 });
 
-test('same pending modules should not be pushed to the queue more than once', function() {
+QUnit.test('same pending modules should not be pushed to the queue more than once', function() {
   define('foo', ['bar', 'exports'], function(bar, __exports__) {
     __exports__.quz = function() {
       return bar.baz;
@@ -656,7 +656,7 @@ test('same pending modules should not be pushed to the queue more than once', fu
   });
 });
 
-test('basic CJS mode', function() {
+QUnit.test('basic CJS mode', function() {
   define('a/foo', ['require', 'exports', 'module'], function(require, exports, module) {
     module.exports = {
       bar: require('./bar').name
@@ -687,7 +687,7 @@ test('basic CJS mode', function() {
   equal(foo.bar, 'bar');
 });
 
-test('pass default deps if arguments are expected and deps not passed', function() {
+QUnit.test('pass default deps if arguments are expected and deps not passed', function() {
   // this is intentionally testing the array-less form
   define('foo', function(require, exports, module) { // jshint ignore:line
     equal(arguments.length, 3);
@@ -696,7 +696,7 @@ test('pass default deps if arguments are expected and deps not passed', function
   require('foo');
 });
 
-test('if factory returns a value it is used as export', function() {
+QUnit.test('if factory returns a value it is used as export', function() {
   define('foo', ['require', 'exports', 'module'], function() {
     return {
       bar: 'bar'
@@ -723,7 +723,7 @@ test('if factory returns a value it is used as export', function() {
   equal(foo.bar, 'bar');
 });
 
-test('if a module has no default property assume the return is the default', function() {
+QUnit.test('if a module has no default property assume the return is the default', function() {
   define('foo', [], function() {
     return {
       bar: 'bar'
@@ -751,7 +751,7 @@ test('if a module has no default property assume the return is the default', fun
 });
 
 
-test('if a CJS style module has no default export assume module.exports is the default', function() {
+QUnit.test('if a CJS style module has no default export assume module.exports is the default', function() {
   define('Foo', ['require', 'exports', 'module'], function(require, exports, module) {
     module.exports = function Foo() {
       this.bar = 'bar';
@@ -779,7 +779,7 @@ test('if a CJS style module has no default export assume module.exports is the d
 });
 
 
-test('if a module has no default property assume its export is default (function)', function() {
+QUnit.test('if a module has no default property assume its export is default (function)', function() {
   var theFunction = function theFunction() {};
   define('foo', ['require', 'exports', 'module'], function() {
     return theFunction;
@@ -804,7 +804,7 @@ test('if a module has no default property assume its export is default (function
   });
 });
 
-test('if a module has no default property assume its export is default (object)', function() {
+QUnit.test('if a module has no default property assume its export is default (object)', function() {
   var theObject = {};
   define('foo', ['require', 'exports', 'module'], function() {
     return theObject;
@@ -829,7 +829,7 @@ test('if a module has no default property assume its export is default (object)'
   });
 });
 
-test('does not add default if export is frozen', function() {
+QUnit.test('does not add default if export is frozen', function() {
   var theObject = Object.freeze({});
   define('foo', ['require', 'exports', 'module'], function() {
     return theObject;
@@ -854,7 +854,7 @@ test('does not add default if export is frozen', function() {
   });
 });
 
-test('does not add default if export is sealed', function() {
+QUnit.test('does not add default if export is sealed', function() {
   var theObject = Object.seal({ derp: {} });
   define('foo', ['require', 'exports', 'module'], function() {
     return theObject;
@@ -879,7 +879,7 @@ test('does not add default if export is sealed', function() {
   });
 });
 
-test('has good error message for missing module', function() {
+QUnit.test('has good error message for missing module', function() {
   var theFunction = function theFunction() {};
   define('foo', ['apple'], function() {
     return theFunction;
@@ -890,7 +890,7 @@ test('has good error message for missing module', function() {
   }, /Could not find module `apple` imported from `foo`/);
 });
 
-test('provides good error message when an un-named AMD module is provided', function() {
+QUnit.test('provides good error message when an un-named AMD module is provided', function() {
   throws(function() {
     define(function() {
 
@@ -899,7 +899,7 @@ test('provides good error message when an un-named AMD module is provided', func
 });
 
 
-test('throws when accessing parent module of root', function() {
+QUnit.test('throws when accessing parent module of root', function() {
   expect(2);
 
   define('foo', ['../a'], function() {});
@@ -915,7 +915,7 @@ test('throws when accessing parent module of root', function() {
   }, /Cannot access parent module of root/);
 });
 
-test('relative CJS esq require', function() {
+QUnit.test('relative CJS esq require', function() {
   define('foo/a', ['require'], function(require) {
     return require('./b');
   });
@@ -933,7 +933,7 @@ test('relative CJS esq require', function() {
 });
 
 
-test('relative CJS esq require (with exports and module);', function() {
+QUnit.test('relative CJS esq require (with exports and module);', function() {
   define('foo/a', ['module', 'exports', 'require'], function(module, exports, require) {
     module.exports = require('./b');
   });
@@ -964,7 +964,7 @@ test('relative CJS esq require (with exports and module);', function() {
   });
 });
 
-test('foo foo/index are the same thing', function() {
+QUnit.test('foo foo/index are the same thing', function() {
   define('foo/index', [] , function() {
     return { 'default': 'hi' };
   });
@@ -993,7 +993,7 @@ test('foo foo/index are the same thing', function() {
   });
 });
 
-test('foo automatically falls back to foo/index', function() {
+QUnit.test('foo automatically falls back to foo/index', function() {
   define('foo/index', [] , function() {
     return { 'default': 'hi' };
   });
@@ -1020,7 +1020,7 @@ test('foo automatically falls back to foo/index', function() {
   });
 });
 
-test('automatic /index fallback no ambiguity', function() {
+QUnit.test('automatic /index fallback no ambiguity', function() {
   define('foo/index', [], function() {
     return 'I AM foo/index';
   });
@@ -1049,7 +1049,7 @@ test('automatic /index fallback no ambiguity', function() {
   });
 });
 
-test('automatic /index fallback is not used if module is defined', function() {
+QUnit.test('automatic /index fallback is not used if module is defined', function() {
   define('foo', [], function() {
     return 'I AM foo';
   });
@@ -1081,7 +1081,7 @@ test('automatic /index fallback is not used if module is defined', function() {
   });
 });
 
-test('unsee', function() {
+QUnit.test('unsee', function() {
   var counter = 0;
   define('foo', [] , function() {
     counter++;
@@ -1116,7 +1116,7 @@ test('unsee', function() {
   });
 });
 
-test('manual /index fallback no ambiguity', function() {
+QUnit.test('manual /index fallback no ambiguity', function() {
   define('foo/index', [], function() {
     return 'I AM foo/index';
   });
@@ -1147,7 +1147,7 @@ test('manual /index fallback no ambiguity', function() {
   });
 });
 
-test('manual /index fallback with ambiguity (alias after)', function() {
+QUnit.test('manual /index fallback with ambiguity (alias after)', function() {
   var counts = {
     foo: 0,
     'foo/index': 0
@@ -1194,7 +1194,7 @@ test('manual /index fallback with ambiguity (alias after)', function() {
   });
 });
 
-test('manual /index fallback with ambiguity (alias after all defines but before require)', function() {
+QUnit.test('manual /index fallback with ambiguity (alias after all defines but before require)', function() {
   define('foo', [], function() {
     return 'I AM foo';
   });
@@ -1229,7 +1229,7 @@ test('manual /index fallback with ambiguity (alias after all defines but before 
   });
 });
 
-test('alias entries share same module instance', function() {
+QUnit.test('alias entries share same module instance', function() {
   var count = 0;
   define('foo', define.alias('foo/index'));
 
@@ -1260,7 +1260,7 @@ test('alias entries share same module instance', function() {
   });
 });
 
-test('alias with 2 arguments entries share same module instance', function() {
+QUnit.test('alias with 2 arguments entries share same module instance', function() {
   var count = 0;
   define.alias('foo/index', 'bar');
 
@@ -1279,7 +1279,7 @@ test('alias with 2 arguments entries share same module instance', function() {
   strictEqual(bar, fooIndex);
 });
 
-test('/index fallback + unsee', function() {
+QUnit.test('/index fallback + unsee', function() {
   var count = 0;
   define('foo/index', [], function() {
     count++;
@@ -1319,7 +1319,7 @@ test('/index fallback + unsee', function() {
   });
 });
 
-test('alias with target \w deps', function() {
+QUnit.test('alias with target \w deps', function() {
   define('foo', ['bar'], function(bar) {
     return bar;
   });
@@ -1348,7 +1348,7 @@ test('alias with target \w deps', function() {
   });
 });
 
-test('alias chain (simple)', function() {
+QUnit.test('alias chain (simple)', function() {
   define('bar', [], function() {
     return 'I AM BAR';
   });
@@ -1374,7 +1374,7 @@ test('alias chain (simple)', function() {
   });
 });
 
-test('alias chain (simple) with implicit /index', function() {
+QUnit.test('alias chain (simple) with implicit /index', function() {
   define('bar/index', [], function() {
     return 'I AM BAR';
   });
@@ -1403,7 +1403,7 @@ test('alias chain (simple) with implicit /index', function() {
   });
 });
 
-test('alias chain (long)', function() {
+QUnit.test('alias chain (long)', function() {
   define('bar', [], function() {
     return 'I AM BAR';
   });
@@ -1431,7 +1431,7 @@ test('alias chain (long)', function() {
   });
 });
 
-test('alias chains are lazy', function() {
+QUnit.test('alias chains are lazy', function() {
   define('bar', [], function() {
     return 'I AM BAR';
   });
@@ -1469,7 +1469,7 @@ test('alias chains are lazy', function() {
   });
 });
 
-test('alias chains propogate unsee', function() {
+QUnit.test('alias chains propogate unsee', function() {
   var counter = 0;
 
   define('bar', [], function() {
@@ -1506,7 +1506,7 @@ test('alias chains propogate unsee', function() {
   });
 });
 
-test('alias chains propogate unsee with implicit /index', function() {
+QUnit.test('alias chains propogate unsee with implicit /index', function() {
   var counter = 0;
 
   define('bar/index', [], function() {
@@ -1543,7 +1543,7 @@ test('alias chains propogate unsee with implicit /index', function() {
   });
 });
 
-test('alias chaining with relative deps works', function() {
+QUnit.test('alias chaining with relative deps works', function() {
   define('foo/baz', [], function() {
     return 'I AM baz';
   });
@@ -1575,7 +1575,7 @@ test('alias chaining with relative deps works', function() {
   });
 });
 
-test('wrapModules is called when present', function() {
+QUnit.test('wrapModules is called when present', function() {
   var fooCalled = 0;
   var annotatorCalled = 0;
   var _loaderWrapModules = loader.wrapModules;
@@ -1610,7 +1610,7 @@ test('wrapModules is called when present', function() {
   loader.wrapModules = _loaderWrapModules;
 });
 
-test('import require from "require" works', function () {
+QUnit.test('import require from "require" works', function () {
   define('foo/baz', function () {
     return 'I AM baz';
   });
@@ -1637,7 +1637,7 @@ test('import require from "require" works', function () {
   });
 });
 
-test('require has a has method', function () {
+QUnit.test('require has a has method', function () {
   define('foo/baz/index', function () {
     return 'I AM baz';
   });
@@ -1666,7 +1666,7 @@ test('require has a has method', function () {
   });
 });
 
-test('broken modules are never returned', function() {
+QUnit.test('broken modules are never returned', function() {
   define('foo', function() {
     throw new Error('I am a broken module');
   });
@@ -1680,7 +1680,7 @@ test('broken modules are never returned', function() {
   }, /I am a broken module/, 'The second time');
 });
 
-test('modules with broken dependencies are never returned', function() {
+QUnit.test('modules with broken dependencies are never returned', function() {
   define('foo', ['other'], function() {
     throw new Error('I am a broken module');
   });
@@ -1707,7 +1707,7 @@ test('modules with broken dependencies are never returned', function() {
   }, /I am a broken module/, 'The second time');
 });
 
-test('redefining a module when "new" replaces previous definition', function(assert) {
+QUnit.test('redefining a module when "new" replaces previous definition', function(assert) {
   var first = false;
   var second = false;
 
@@ -1722,7 +1722,7 @@ test('redefining a module when "new" replaces previous definition', function(ass
   assert.ok(second, 'second module definition is used');
 });
 
-test('redefining a module when "pending" should no-op', function(assert) {
+QUnit.test('redefining a module when "pending" should no-op', function(assert) {
   assert.expect(3);
 
   var first = false;
@@ -1744,7 +1744,7 @@ test('redefining a module when "pending" should no-op', function(assert) {
   assert.notOk(second, 'second module definition never used');
 });
 
-test('reify should release', function(assert) {
+QUnit.test('reify should release', function(assert) {
   define('foo', ['bar'], function() { });
   define('bar', ['bar'], function() { });
 
@@ -1755,7 +1755,7 @@ test('reify should release', function(assert) {
   assert.deepEqual(require.entries['bar'].reified, []);
 
 });
-test('redefining a module when "reifying" should no-op', function(assert) {
+QUnit.test('redefining a module when "reifying" should no-op', function(assert) {
   var first = false;
   var second = false;
 
@@ -1773,7 +1773,7 @@ test('redefining a module when "reifying" should no-op', function(assert) {
   assert.notOk(second, 'second module definition never used');
 });
 
-test('redefining a module when "reified" should no-op', function(assert) {
+QUnit.test('redefining a module when "reified" should no-op', function(assert) {
   var first = false;
   var second = false;
 
@@ -1791,7 +1791,7 @@ test('redefining a module when "reified" should no-op', function(assert) {
   assert.notOk(second, 'second module definition never used');
 });
 
-test('redefining a module when "errored" should no-op', function(assert) {
+QUnit.test('redefining a module when "errored" should no-op', function(assert) {
   assert.expect(4);
 
   var first = false;
@@ -1814,7 +1814,7 @@ test('redefining a module when "errored" should no-op', function(assert) {
   assert.notOk(second, 'second module definition never used');
 });
 
-test('redefining a module when "finalized" should no-op', function(assert) {
+QUnit.test('redefining a module when "finalized" should no-op', function(assert) {
   var first = false;
   var second = false;
 
@@ -1828,13 +1828,13 @@ test('redefining a module when "finalized" should no-op', function(assert) {
   assert.notOk(second, 'second module definition never used');
 });
 
-test('define.exports', function(assert) {
+QUnit.test('define.exports', function(assert) {
   var defaultExport = { example: 'export' };
   define.exports('foo/bar', defaultExport);
   assert.equal(require('foo/bar'), defaultExport);
 });
 
-test('require.moduleId', function(assert) {
+QUnit.test('require.moduleId', function(assert) {
   define('foo', ['require'], function(require) {
     assert.equal(require.moduleId, 'foo');
     return require.moduleId;
