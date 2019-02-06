@@ -1433,10 +1433,10 @@ jsesc@~0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-0.5.0.tgz#e7dee66e35d6fc16f710fe91d5cf69f70f08911d"
 
-jshint@^2.10.0:
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/jshint/-/jshint-2.10.0.tgz#3d6c054932c550df6ae90925cdc060b923e0c52e"
-  integrity sha512-M6P/Y9vlgZmdzran8aw060P+Dkjgy3bwIMiHPTzJ01k/X376No55s/rJaeQCIzivhO+sJhV6zud/ZwA7u4N2cg==
+jshint@^2.10.1:
+  version "2.10.1"
+  resolved "https://registry.yarnpkg.com/jshint/-/jshint-2.10.1.tgz#06bd4cea090c424405aa0987de741341ff17f6bc"
+  integrity sha512-9GpPfKeffYBl7oBDX2lHPG16j0AM7D2bn3aLy9DaWTr6CWa0i/7UGhX8WLZ7V14QQnnr4hXbjauTLYg06F+HYw==
   dependencies:
     cli "~1.0.0"
     console-browserify "1.1.x"
