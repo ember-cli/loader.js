@@ -43,7 +43,7 @@
     "ora": "^3.4.0",
     "promise-map-series": "^0.2.2",
     "qunit": "^2.9.2",
-    "testem": "^2.15.0"
+    "testem": "^2.15.1"
   },
   "ember-addon": {
     "main": "index.js"
