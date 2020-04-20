@@ -2402,10 +2402,10 @@ tap-parser@^7.0.0:
     js-yaml "^3.2.7"
     minipass "^2.2.0"
 
-testem@^2.17.0:
-  version "2.17.0"
-  resolved "https://registry.yarnpkg.com/testem/-/testem-2.17.0.tgz#1cb4a2a90524a088803dfe52fbf197a6fd73c883"
-  integrity sha512-PLkIlT523w5rTJPWwR4TL1EiAEa941ECV7d4pMqsB0YdnH+sCTz0loWMKCUSdhR+VijveAZ6anE/JHehE7KqMQ==
+testem@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/testem/-/testem-3.0.4.tgz#6fe2a22993bb400c0bad47f2318898c86562df90"
+  integrity sha512-qVvlqIaffG/7s862JmUEPPfLIvMGTTzj+3HOz7r0o6bEll+H27Oqu4I9KrZauEXQheSOOTRApTAE/6RmM7IXlw==
   dependencies:
     backbone "^1.1.2"
     bluebird "^3.4.6"
