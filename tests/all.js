@@ -38,6 +38,7 @@ QUnit.module('loader.js api', function(hooks) {
     this._define = define;
     this._loader = loader;
     this._require = require;
+    this._requirejs = requirejs;
     heimdall._session.reset();
     tree = new Heimdall.Tree(heimdall);
   });
@@ -46,6 +47,7 @@ QUnit.module('loader.js api', function(hooks) {
     define = this._define;
     loader = this._loader;
     require = this._require;
+    requirejs = this._requirejs;
 
     requirejs.clear();
   });
@@ -1842,4 +1844,17 @@ QUnit.module('loader.js api', function(hooks) {
     define.alias('foo', 'foo/bar');
     assert.equal(require('foo/bar'), 'foo');
   });
+
+  QUnit.test('no conflict aliases', function(assert) {
+    var aliases = {
+      require: 'newRequire',
+      requirejs: 'newRequireJS'
+    };
+
+    loader.noConflict(aliases);
+
+    assert.strictEqual(aliases, loader.__aliases);
+  });
+
+
 });
